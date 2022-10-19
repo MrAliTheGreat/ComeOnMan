@@ -1,11 +1,26 @@
+const ConnectionConfig = require("../../ConnectionConfig")
+
 const express = require("express")
 
 const app = express()
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
     res.send("Welcome to ComeOnMan Backend Server!")
 })
 
-app.listen(3000, () => {
-    console.log("Express: Listening on port 3000!")
+const server = app.listen(ConnectionConfig.expressPort, ConnectionConfig.serverVirtualIP, () => {
+    console.log(`Express: Listening on port ${ConnectionConfig.expressPort}!`)
+})
+
+const io = require("socket.io")(server, {
+    origins: [`http://${ConnectionConfig.serverVirtualIP}:${ConnectionConfig.expressPort}/`],
+    cors: true
+})
+
+io.on("connection", (socket) => {
+    console.log(socket.id)
+
+    socket.on("SEND_MESSAGE", (data) => {
+        io.emit("NEW_MESSAGE", data)
+    })
 })

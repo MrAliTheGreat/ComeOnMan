@@ -9,12 +9,16 @@
 </template>
 
 <script>
+import { io } from "socket.io-client"
+import { serverVirtualIP, expressPort } from "../../ConnectionConfig"
+
 export default {
     name: "App",
-    data: () => {
+    data() {
         return {
             message: "",
-            chat: []
+            chat: [],
+            socket: io(`http://${serverVirtualIP}:${expressPort}/`)
         }
     },
     methods: {
@@ -22,11 +26,16 @@ export default {
             this.message = event.target.value
         },
         onSubmit() {
-            this.chat.push({
+            this.socket.emit("SEND_MESSAGE", {
                 msg: this.message,
-                time: new Date().toLocaleTimeString()
+                time: new Date().toLocaleTimeString()                
             })
         }
+    },
+    mounted(){ 
+        this.socket.on("NEW_MESSAGE", (data) => {
+            this.chat.push(data)            
+        })
     }
 }
 </script>

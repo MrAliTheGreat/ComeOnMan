@@ -1,41 +1,14 @@
 <template>
-    <div>
-        <input @input="onInput" @keyup.enter="onSubmit"/>
-        <button @click="onSubmit"> Send! </button>
-        <li v-for="{msg, time} in this.chat" :key="time">
-            {{msg}} - {{time}}
-        </li>
-    </div>
+    <ChatArea></ChatArea>
 </template>
 
 <script>
-import { io } from "socket.io-client"
-import { serverVirtualIP, expressPort } from "../../ConnectionConfig"
+import ChatArea from "./components/ChatArea.vue"
 
 export default {
     name: "App",
-    data() {
-        return {
-            message: "",
-            chat: [],
-            socket: io(`http://${serverVirtualIP}:${expressPort}/`)
-        }
-    },
-    methods: {
-        onInput(event) {
-            this.message = event.target.value
-        },
-        onSubmit() {
-            this.socket.emit("SEND_MESSAGE", {
-                msg: this.message,
-                time: new Date().toLocaleTimeString()                
-            })
-        }
-    },
-    mounted(){ 
-        this.socket.on("NEW_MESSAGE", (data) => {
-            this.chat.push(data)            
-        })
+    components: {
+        ChatArea
     }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <ChatArea v-if="user" :user="user"></ChatArea>
         <LoginArea v-else @usernameSubmit="onUsernameSubmit"></LoginArea>
     </div>
@@ -28,5 +28,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+div {
+    background-color: #151515;
+    display: flex;
+    justify-content: center;
+}
 </style>

@@ -2,7 +2,7 @@
     <div>
         <input @input="onInput" @keyup.enter="onSubmit"/>
         <button @click="onSubmit"> Send! </button>
-        <li v-for="{user, msg, time} in this.chat" :key="time">
+        <li v-for="{user, msg, time} in this.chat" :key="time + user + Math.random()">
             {{msg}} - {{time}} - {{user}}
         </li>
     </div>
@@ -16,19 +16,19 @@ export default {
     name: "ChatArea",
     data() {
         return {
-            username: "",
             message: "",
             chat: [],
             socket: io(`http://${serverVirtualIP}:${expressPort}/`)
         }
     },
+    props: ["user"],
     methods: {
         onInput(event) {
             this.message = event.target.value
         },
         onSubmit() {
             this.socket.emit("SEND_MESSAGE", {
-                user: this.username,
+                user: this.user,
                 msg: this.message,
                 time: new Date().toLocaleTimeString()                
             })

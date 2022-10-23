@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <ChatArea v-if="user" :user="user"></ChatArea>
         <LoginArea v-else @usernameSubmit="onUsernameSubmit"></LoginArea>
     </div>

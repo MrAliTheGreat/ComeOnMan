@@ -5,7 +5,9 @@
         </div>
         <div style="display: flex;">
             <div class="dropdown">
-                <img :src="avatar" />
+                <Transition name="avatar-change" mode="out-in">
+                    <img :src="avatar" :key="avatar" />
+                </Transition>
                 <div class="dropdown-content">
                     <img 
                         class="choiceImg"
@@ -99,6 +101,11 @@ button{
     box-shadow: 10px 0px 15px #000000;
 }
 
+button:active {
+    background-color: #EEEEEE;
+    transform: translateY(1px);
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
@@ -128,7 +135,7 @@ button{
 }
 
 .flicker-slow {
-    animation: flicker 2.5s ease infinite;
+    animation: flicker 2.75s ease infinite;
 }
 
 .flicker-fast {
@@ -140,7 +147,19 @@ button{
         opacity: 1;
     }
     16%, 61%, 91% {
-        opacity: 0.5;
+        opacity: 0.4;
     }
+}
+.avatar-change-leave-to {
+    opacity: 0;
+}
+.avatar-change-enter {
+    opacity: 0;
+    transform: translateX(-25px);
+}
+
+.avatar-change-enter-active,
+.avatar-change-leave-active {
+    transition: all 0.3s ease-out;
 }
 </style>

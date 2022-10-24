@@ -1,9 +1,12 @@
 <template>
     <div class="mainDiv">
-        <div class="title">
+        <div :class="[isChatView ? 'on-top' : 'title']">
             ComeO<span class="flicker-slow">nM</span><span class="flicker-fast">an!</span>
         </div>
-        <div style="display: flex;">
+        <div :class="[isChatView ? 'on-middle' : '']">
+            <!-- Chat Logic Should Go Here!!! -->
+        </div>
+        <div style="display: flex;" :class="[isChatView ? 'on-bottom' : '']" >
             <div class="dropdown">
                 <Transition name="avatar-change" mode="out-in">
                     <img :src="avatar" :key="avatar" />
@@ -30,7 +33,8 @@ export default {
     data() {
         return {
             avatar: '/astronaut.png',
-            username: ""
+            username: "",
+            isChatView: false,
         }
     },
     methods: {
@@ -39,6 +43,7 @@ export default {
         },
         onSubmit() {
             this.$emit("usernameSubmit", this.username)
+            this.isChatView = true
         },
         onImgSelect(event) {
             this.avatar = event.target.src
@@ -48,12 +53,20 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter {
+    opacity: 0;
+}
+.fade-enter-active{
+    transition: all 2s ease;
+}
+
+
 .mainDiv {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
     align-items: center;
-    min-height: 80vh;
+    min-height: 100vh;
 }
 
 .title {
@@ -161,5 +174,41 @@ button:active {
 .avatar-change-enter-active,
 .avatar-change-leave-active {
     transition: all 0.3s ease-out;
+}
+
+.on-top {
+    flex: 0;
+    color: #FFFFFF;
+    font-family: "SignPainter", sans-serif;
+    text-shadow: 5px 0px 50px #888888;
+    animation: moveToTop 4s forwards;
+}
+
+.on-middle {
+    animation: expandMiddle 4s forwards;
+}
+
+.on-bottom {
+    flex: 0;
+    margin-bottom: 1px;
+}
+
+
+@keyframes moveToTop{
+    0% {
+        font-size: 80px;
+    }
+    100% {
+        font-size: 40px;
+    }
+}
+
+@keyframes expandMiddle{
+    0% {
+        flex: 0;
+    }
+    100% {
+        flex: 1;
+    }
 }
 </style>

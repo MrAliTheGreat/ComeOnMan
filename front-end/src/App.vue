@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 div {
-    background-color: #151515;
+    background-color: #101010;
     display: flex;
     justify-content: center;
 }

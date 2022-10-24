@@ -1,7 +1,7 @@
 <template>
     <div class="mainDiv">
         <div class="title">
-            ComeOnMan!
+            ComeO<span class="flicker-slow">nM</span><span class="flicker-fast">an!</span>
         </div>
         <div style="display: flex;">
             <div class="dropdown">
@@ -58,6 +58,7 @@ export default {
     color: #FFFFFF;
     font-family: "SignPainter", sans-serif;
     font-size: 80px;
+    text-shadow: 5px 0px 50px #888888;
 }
 
 img {
@@ -73,7 +74,7 @@ input {
     font-family: 'SF Pro Display', sans-serif;
     font-size: 16px;
     font-weight: bold;
-    border: 1px solid #151515;
+    border: 1px solid #101010;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     box-shadow: 5px 0px 20px 3px #000000;
@@ -93,8 +94,8 @@ button{
     font-weight: bold;
     font-size: 16px;
     background-color: #FFFFFF;
-    border: 1px solid #151515;
-    border-left: 2px solid #151515;
+    border: 1px solid #101010;
+    border-left: 2px solid #101010;
     box-shadow: 10px 0px 15px #000000;
 }
 
@@ -124,5 +125,22 @@ button{
 }
 .choiceImg:hover {
     background-color: #606060;
+}
+
+.flicker-slow {
+    animation: flicker 2.5s ease infinite;
+}
+
+.flicker-fast {
+    animation: flicker 2s ease infinite;
+}
+
+@keyframes flicker {
+    0%, 15%, 60%, 90%, 100% {
+        opacity: 1;
+    }
+    16%, 61%, 91% {
+        opacity: 0.5;
+    }
 }
 </style>

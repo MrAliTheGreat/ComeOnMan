@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex;" :class="[isChat ? 'on-bottom' : '']" >
+    <div style="display: flex;" :class="[isChat ? 'on-bottom' : '']" ref="login" >
         <div class="dropdown">
             <Transition name="avatar-change" mode="out-in">
                 <img :src="avatar" :key="avatar" />
@@ -36,6 +36,12 @@ export default {
         onSubmit() {
             this.$emit("usernameSubmit", this.username)
             this.$emit("chat", true)
+            if(!this.username){
+                this.$refs.login.className = "no-username"
+            }
+            setTimeout(() => {
+                this.$refs.login.className = ""
+            }, 600) // The same as time for animation in .no-username
         },
         onImgSelect(event) {
             this.avatar = event.target.src
@@ -131,5 +137,27 @@ button:active {
 .avatar-change-enter-active,
 .avatar-change-leave-active {
     transition: all 0.3s ease-out;
+}
+
+.no-username {
+    animation: shake 0.6s ease;
+}
+
+@keyframes shake {
+    20% {
+        transform: translateX(30px);
+    }
+    40% {
+        transform: translateX(-30px);
+    }
+    60% {
+        transform: translateX(15px);
+    }
+    80% {
+        transform: translateX(-15px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
 }
 </style>

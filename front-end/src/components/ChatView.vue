@@ -44,7 +44,7 @@ export default {
     },
     mounted(){ 
         this.$socket.on("NEW_MESSAGE", (data) => {
-            this.chat.push(data)            
+            this.chat.unshift(data)            
         })
     }    
 }
@@ -60,7 +60,7 @@ img {
 }
 .on-middle {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     flex: 1;
     overflow: scroll;
     scrollbar-width: none;

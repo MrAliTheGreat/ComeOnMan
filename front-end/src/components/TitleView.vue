@@ -14,7 +14,7 @@ export default {
 <style scoped>
 .title {
     color: #FFFFFF;
-    font-family: "SignPainter", sans-serif;
+    font-family: "SignPainter HouseScript", sans-serif;
     font-size: 80px;
     text-shadow: 5px 0px 50px #888888;
 }
@@ -39,7 +39,7 @@ export default {
 .on-top-title {
     flex: 0;
     color: #FFFFFF;
-    font-family: "SignPainter", sans-serif;
+    font-family: "SignPainter HouseScript", sans-serif;
     text-shadow: 5px 0px 50px #888888;
     animation: moveToTop 4s forwards;
 }

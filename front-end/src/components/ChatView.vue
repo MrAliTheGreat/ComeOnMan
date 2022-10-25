@@ -1,9 +1,7 @@
 <template>
     <div :class="[isChat ? 'on-middle' : '']">
-        <input @input="onInput" @keyup.enter="onSubmit"/>
-        <button @click="onSubmit"> Send! </button>
-        <li v-for="{username, msg, time} in this.chat" :key="time + username + Math.random()">
-            {{msg}} - {{time}} - {{username}}
+        <li v-for="{user, content, time} in this.chat" :key="time + user.name" style="color:white">
+            {{content}} - {{time}} - {{user}}
         </li>
     </div>
 </template>
@@ -16,24 +14,11 @@ export default {
     name: "ChatView",
     data() {
         return {
-            message: "",
             chat: [],
             socket: io(`http://${serverVirtualIP}:${expressPort}/`)
         }
     },
-    props: ["username", "isChat"],
-    methods: {
-        onInput(event) {
-            this.message = event.target.value
-        },
-        onSubmit() {
-            this.socket.emit("SEND_MESSAGE", {
-                username: this.username,
-                msg: this.message,
-                time: new Date().toLocaleTimeString()                
-            })
-        }
-    },
+    props: ["isChat"],
     mounted(){ 
         this.socket.on("NEW_MESSAGE", (data) => {
             this.chat.push(data)            

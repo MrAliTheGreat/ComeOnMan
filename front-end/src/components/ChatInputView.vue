@@ -1,7 +1,7 @@
 <template>
     <div class="main-div" >
         <img :src="user.avatar" />
-        <textarea placeholder="What You Wanna Talk About..." @input="onInput" @keyup.enter.exact="onSubmit"></textarea>
+        <textarea placeholder="What You Wanna Talk About..." @input="onInput" @keyup.enter.exact="onSubmit" ref="chatText"></textarea>
         <button @click="onSubmit"> Send! </button>
     </div>
 </template>
@@ -19,11 +19,13 @@ export default {
         onInput(event) {
             this.message.content = event.target.value
         },
-        onSubmit(event){
-            event.target.value = ""
-            this.message.user = this.user
-            this.message.time = new Date().toLocaleTimeString()
-            this.$socket.emit("SEND_MESSAGE", this.message)
+        onSubmit(){
+            if(this.message.content){
+                this.$refs.chatText ? this.$refs.chatText.value = "" : null
+                this.message.user = this.user
+                this.message.time = new Date().toLocaleTimeString()
+                this.$socket.emit("SEND_MESSAGE", this.message)
+            }
         }
     },     
 }
@@ -71,13 +73,13 @@ button{
     font-family: 'SF Pro Display', sans-serif;
     font-weight: bold;
     font-size: 16px;
-    background-color: #21B2FF;
+    background-color: #FDFF61;
     border: 2px solid #101010;
     box-shadow: 10px 0px 15px #000000;
 }
 
 button:active {
-    background-color: #2186FF;
+    background-color: #ACAD42;
     transform: translateY(1px);
 }
 

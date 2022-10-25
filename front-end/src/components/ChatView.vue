@@ -4,10 +4,10 @@
             v-for="{user, content, time} in chat" :key="time + user.name"
             :class="getMessageClassName(user.socketID)"
         >
-            <div class="message" v-if="user.socketID === $socket.id">
-                <div style="display: flex; flex-direction: column; flex: 1; margin-right: 20px;">
+            <div class="message" v-if="user.socketID === $socket.id" >
+                <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-right: 20px;">
                     <span style="margin: 10px; word-break: break-word;">{{content}}</span>
-                    <span style="font-size: 10px">{{time}}</span>
+                    <span style="font-size: 10px; margin-bottom: 5px;">{{time}}</span>
                 </div>
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <img :src="user.avatar"/>
@@ -15,11 +15,14 @@
                 </div>
             </div>
             <div class="message" v-else>
-                <img :src="user.avatar"/>
-                <div style="display: flex; flex-direction: column; flex: 1; margin-right: 20px;">
-                    <span style="margin-bottom: 10px; word-break: break-word;">{{content}}</span>
-                    <span style="font-size: 10px">{{time}}</span>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <img :src="user.avatar"/>
+                    <span class="username">{{user.name}}</span>
                 </div>                
+                <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-left: 10px;">
+                    <span style="margin: 10px; word-break: break-word;">{{content}}</span>
+                    <span style="font-size: 10px; margin-bottom: 5px; align-self: flex-end;">{{time}}</span>
+                </div>               
             </div>            
         </div>
     </div>
@@ -78,28 +81,31 @@ img {
     margin: 10px;
     background-color: #7FFFCB;
     box-shadow: 0px 0px 10px #7FFFCB;  
-    border-radius: 15px;  
+    border-radius: 15px;
+    padding-left: 10px;
 }
 
 .peer-wrapper {
     max-width: 65%;
     align-self: flex-start;
     margin: 10px;
+    background-color: #84F4FF;
+    box-shadow: 0px 0px 10px #84F4FF;  
+    border-radius: 15px;
+    padding-right: 10px;
 }
 
 .message {
     display: flex;
-    align-items: center;
     font-family: 'SF Pro Display', sans-serif;
     font-size: 20px;
-    padding-left: 10px;
 }
 
 .username {
     font-family: 'SF Pro Display', sans-serif;
     font-weight: bolder;
     font-size: 12px;
-    margin: 5px;
+    margin-bottom: 10px;
     margin-left: 10px;
     margin-right: 10px;
     word-break: break-word;

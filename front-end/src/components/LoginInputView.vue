@@ -34,13 +34,13 @@ export default {
             this.username = event.target.value
         },
         onSubmit() {
-            this.$emit("usernameSubmit", this.username)
+            this.$emit("userSubmit", {name: this.username, avatar: this.avatar})
             this.$emit("chat", true)
             if(!this.username){
-                this.$refs.login.className = "no-username"
+                this.$refs.login ? this.$refs.login.className = "no-username" : null
             }
             setTimeout(() => {
-                this.$refs.login.className = ""
+                this.$refs.login ? this.$refs.login.className = "" : null
             }, 600) // The same as time for animation in .no-username
         },
         onImgSelect(event) {

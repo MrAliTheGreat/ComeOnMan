@@ -1,21 +1,29 @@
 <template>
     <div class="container-fluid root-div">
-        <TitleView :isChat="isChat"></TitleView>
-        <ChatView v-if="username" :isChat="isChat" :username="username"></ChatView>
-        <LoginInputView :isChat="isChat" @chat="onChat" @usernameSubmit="onUsernameSubmit"></LoginInputView>
+        <TitleView :isChat="isChat" />
+        <ChatView v-if="isChat" :isChat="isChat" :username="user.name" />
+        <Transition name="fade" mode="out-in">
+            <ChatInputView v-if="isChat" :user="user" />
+            <LoginInputView v-else 
+                :isChat="isChat"
+                @chat="onChat"
+                @userSubmit="onUserSubmit"
+            />
+        </Transition>
     </div>
 </template>
 
 <script>
 import TitleView from './components/TitleView.vue';
 import LoginInputView from './components/LoginInputView.vue';
+import ChatInputView from './components/ChatInputView.vue';
 import ChatView from "./components/ChatView.vue"
 
 export default {
     name: "App",
     data() {
         return {
-            username: "",
+            user: {},
             isChat: false
         }
     },
@@ -23,13 +31,15 @@ export default {
         TitleView,
         LoginInputView,
         ChatView,
+        ChatInputView,
     },
     methods: {
-        onUsernameSubmit(username) {
-            this.username = username
+        onUserSubmit({ name, avatar }) {
+            this.user.name = name
+            this.user.avatar = avatar
         },
         onChat(chat) {
-            this.isChat = this.username && chat
+            this.isChat = this.user.name && chat
         }
     }
 }
@@ -44,5 +54,12 @@ export default {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active{
+    transition: all 2s ease;
 }
 </style>

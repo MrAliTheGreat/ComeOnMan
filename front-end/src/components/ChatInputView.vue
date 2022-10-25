@@ -25,6 +25,7 @@ export default {
                 this.message.user = this.user
                 this.message.time = new Date().toLocaleTimeString()
                 this.$socket.emit("SEND_MESSAGE", this.message)
+                this.message.content = ""
             }
         }
     },     
@@ -35,7 +36,7 @@ export default {
 .main-div{
     display: flex;
     flex: 0;
-    margin-bottom: 75px;
+    margin-bottom: 1px;
     margin-top: 10px;
 }
 
@@ -66,7 +67,6 @@ textarea:focus {
 
 button{
     margin: 1px;
-    margin-left: 5px;
     padding-left: 10px;
     padding-right: 10px;
     border-radius: 50%;
@@ -86,6 +86,7 @@ button:active {
 @media (max-width:850px) {
     .main-div {
         width: 100vw;
+        /* margin-bottom: 80px; */
     }
 }
 

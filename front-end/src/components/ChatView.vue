@@ -1,7 +1,8 @@
 <template>
-    <div :class="[isChat ? 'on-middle' : '']">
+    <TransitionGroup name="slide" :class="[isChat ? 'on-middle' : '']">
         <div 
-            v-for="{user, content, time} in chat" :key="time + user.name"
+            v-for="{user, content, time} in chat"
+            :key="time + user.name"
             :class="getMessageClassName(user.socketID)"
         >
             <div class="message" v-if="user.socketID === $socket.id" >
@@ -23,9 +24,9 @@
                     <span style="margin: 10px; word-break: break-word;">{{content}}</span>
                     <span style="font-size: 10px; margin-bottom: 5px; align-self: flex-end;">{{time}}</span>
                 </div>               
-            </div>            
+            </div>   
         </div>
-    </div>
+    </TransitionGroup>
 </template>
 
 <script>
@@ -44,9 +45,9 @@ export default {
     },
     mounted(){ 
         this.$socket.on("NEW_MESSAGE", (data) => {
-            this.chat.unshift(data)            
+            this.chat.unshift(data)
         })
-    }    
+    }
 }
 </script>
 
@@ -62,7 +63,7 @@ img {
     display: flex;
     flex-direction: column-reverse;
     flex: 1;
-    overflow: scroll;
+    overflow-y: scroll;
     scrollbar-width: none;
     animation: expandMiddle 4s forwards;
 }
@@ -111,6 +112,27 @@ img {
     word-break: break-word;
     max-width: 50px;
     text-align: center;
+}
+
+.slide-move {
+    transition: transform 0.5s ease;
+}
+.slide-enter-active {
+    animation: slide 1s ease;
+}
+
+@keyframes slide {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    60% {
+        transform: translateY(0px);
+    }
+    80% {
+        opacity: 0.8;
+        transform: translateY(5px);
+    }    
 }
 
 @media (max-width:850px) {

@@ -60,6 +60,6 @@ export default {
 }
 
 .fade-enter-active, .fade-leave-active{
-    transition: all 1.5s ease;
+    transition: all 1s ease;
 }
 </style>

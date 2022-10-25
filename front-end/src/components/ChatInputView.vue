@@ -1,21 +1,17 @@
 <template>
     <div class="main-div" >
-        <img :src="user.avatar" :key="user.avatar" />
+        <img :src="user.avatar" />
         <textarea placeholder="What You Wanna Talk About..." @input="onInput" @keyup.enter.exact="onSubmit"></textarea>
         <button @click="onSubmit"> Send! </button>
     </div>
 </template>
 
 <script>
-import { io } from "socket.io-client"
-import { serverVirtualIP, expressPort } from "../../../ConnectionConfig"
-
 export default {
     name: "ChatInputView",
     data() {
         return {
             message: {},
-            socket: io(`http://${serverVirtualIP}:${expressPort}/`),
         }
     },
     props: ["user"],
@@ -27,7 +23,7 @@ export default {
             event.target.value = ""
             this.message.user = this.user
             this.message.time = new Date().toLocaleTimeString()
-            this.socket.emit("SEND_MESSAGE", this.message)
+            this.$socket.emit("SEND_MESSAGE", this.message)
         }
     },     
 }
@@ -37,7 +33,8 @@ export default {
 .main-div{
     display: flex;
     flex: 0;
-    margin-bottom: 1px;
+    margin-bottom: 75px;
+    margin-top: 10px;
 }
 
 img {

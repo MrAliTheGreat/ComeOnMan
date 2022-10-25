@@ -1,9 +1,9 @@
 <template>
-    <div class="container-fluid root-div">
+    <div class="root-div">
         <TitleView :isChat="isChat" />
         <ChatView v-if="isChat" :isChat="isChat"/>
         <Transition name="fade" mode="out-in">
-            <ChatInputView v-if="isChat" :user="user" />
+            <ChatInputView v-if="isChat" :user="user"/>
             <LoginInputView v-else 
                 :isChat="isChat"
                 @chat="onChat"
@@ -24,7 +24,7 @@ export default {
     data() {
         return {
             user: {},
-            isChat: false
+            isChat: false,
         }
     },
     components: {
@@ -34,9 +34,10 @@ export default {
         ChatInputView,
     },
     methods: {
-        onUserSubmit({ name, avatar }) {
+        onUserSubmit({ name, avatar, socketID}) {
             this.user.name = name
             this.user.avatar = avatar
+            this.user.socketID = socketID
         },
         onChat(chat) {
             this.isChat = this.user.name && chat
@@ -49,17 +50,16 @@ export default {
 .root-div {
     background-color: #101010;
     display: flex;
-    flex: 1;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
 }
 .fade-enter, .fade-leave-to {
     opacity: 0;
 }
 
 .fade-enter-active, .fade-leave-active{
-    transition: all 2s ease;
+    transition: all 1.5s ease;
 }
 </style>

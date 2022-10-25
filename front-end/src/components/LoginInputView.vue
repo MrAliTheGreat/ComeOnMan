@@ -14,7 +14,7 @@
                 />
             </div>
         </div>
-        <input placeholder="What Should We Call You?" @input="onInput" @keyup.enter="onSubmit"/>
+        <input placeholder="What Should We Call You?" @input="onInput" @keyup.enter.exact="onSubmit"/>
         <button @click="onSubmit"> Login! </button>
     </div>
 </template>
@@ -34,7 +34,7 @@ export default {
             this.username = event.target.value
         },
         onSubmit() {
-            this.$emit("userSubmit", {name: this.username, avatar: this.avatar})
+            this.$emit("userSubmit", {name: this.username, avatar: this.avatar, socketID: this.$socket.id})
             this.$emit("chat", true)
             if(!this.username){
                 this.$refs.login ? this.$refs.login.className = "no-username" : null

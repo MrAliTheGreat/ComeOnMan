@@ -72,7 +72,7 @@ button{
 }
 
 button:active {
-    background-color: #023CE3;
+    background-color: #2186FF;
     transform: translateY(1px);
 }
 

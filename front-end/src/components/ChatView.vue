@@ -1,36 +1,41 @@
-<template>
-    <div :class="[isChat ? 'on-middle' : '']" >
-        <div v-if="!chat.length" :class="[isChat ? 'greeting' : '']">
-            Start Chatting Now...
-        </div>
-        <TransitionGroup v-else name="slide" :class="[isChat ? 'chat-wrapper' : '']">
-            <div 
-                v-for="{user, content, time} in chat"
-                :key="time + user.name"
-                :class="getMessageClassName(user.socketID)"
-            >
-                <div class="message" v-if="user.socketID === $socket.id" >
-                    <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-right: 20px;">
-                        <span style="margin: 10px; word-break: break-word; white-space: pre-wrap;">{{content}}</span>
-                        <span style="font-size: 10px; margin-bottom: 5px;">{{time}}</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <img :src="user.avatar"/>
-                        <span class="username">{{user.name}}</span>
-                    </div>
-                </div>
-                <div class="message" v-else>
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <img :src="user.avatar"/>
-                        <span class="username">{{user.name}}</span>
-                    </div>                
-                    <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-left: 10px;">
-                        <span style="margin: 10px; word-break: break-word; white-space: pre-wrap;">{{content}}</span>
-                        <span style="font-size: 10px; margin-bottom: 5px; align-self: flex-end;">{{time}}</span>
-                    </div>               
-                </div>   
+<template>    
+    <div class="on-middle">
+        <div class="on-middle">   
+            <div v-if="!chat.length" class="greeting">
+                Start Chatting Now...
             </div>
-        </TransitionGroup>
+            <transition-group v-else name="slide" class="chat-wrapper">
+                <div 
+                    v-for="{ user, content, time } in chat"
+                    :key="time + user.name"
+                    :class="getMessageClassName(user.socketID)"
+                >
+                    <div class="message" v-if="user.socketID === $socket.id" >
+                        <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-right: 20px;">
+                            <span style="margin: 10px; word-break: break-word; white-space: pre-wrap;">{{ content }}</span>
+                            <span style="font-size: 10px; margin-bottom: 5px;">{{ time }}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <img :src="user.avatar"/>
+                            <span class="username">{{ user.name }}</span>
+                        </div>
+                    </div>
+                    <div class="message" v-else>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <img :src="user.avatar"/>
+                            <span class="username">{{ user.name }}</span>
+                        </div>                
+                        <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-left: 10px;">
+                            <span style="margin: 10px; word-break: break-word; white-space: pre-wrap;">{{ content }}</span>
+                            <span style="font-size: 10px; margin-bottom: 5px; align-self: flex-end;">{{ time }}</span>
+                        </div>
+                    </div>   
+                </div>
+            </transition-group>
+        </div>
+        <span v-if="typing_peers.length" class="typing-msg">
+            {{ typingMessage }}
+        </span>
     </div>
 </template>
 
@@ -40,17 +45,37 @@ export default {
     data() {
         return {
             chat: [],
+            typing_peers: [],
         }
     },
-    props: ["isChat"],
-    methods : {
+    methods: {
         getMessageClassName(id) {
             return id === this.$socket.id ? "own-wrapper" : "peer-wrapper"
+        },
+    },
+    computed: {
+        typingMessage() {
+            if(!this.typing_peers.length) {
+                return ""
+            }
+            if(this.typing_peers.length === 1) {
+                return this.typing_peers[0].name + " is typing..."
+            }
+            return this.typing_peers.map(peer => peer.name).join(", ") + "are typing..."
         }
     },
     mounted(){ 
         this.$socket.on("NEW_MESSAGE", (data) => {
-            this.chat.unshift(data)
+            this.chat = [data, ...this.chat]
+        })
+        this.$socket.on("PEER_TYPING", (peer) => {
+            if(peer.socketID !== this.$socket.id){
+                if(peer.doneTyping){
+                    this.typing_peers = this.typing_peers.filter(loopPeer => loopPeer.socketID !== peer.socketID )
+                } else {
+                    this.typing_peers = [...this.typing_peers, peer]
+                }
+            }
         })
     }
 }
@@ -167,14 +192,38 @@ img {
     text-align: center;
 }
 
-.slide-move {
-    transition: transform 0.5s ease;
-}
 .slide-enter-active {
-    animation: slide 1s ease;
+    animation: slideIn 1s ease;
 }
 
-@keyframes slide {
+.slide-move {
+    transition: transform 0.5s;
+}
+
+.typing-msg {
+    font-family: 'SF Pro Display', sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    color: white;
+    animation: popup 1s infinite;
+}
+
+@keyframes popup{
+    0% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.25);
+    }
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }    
+}
+
+@keyframes slideIn {
     0% {
         opacity: 0;
         transform: translateY(50px);

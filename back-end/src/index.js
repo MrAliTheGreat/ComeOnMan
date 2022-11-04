@@ -23,4 +23,7 @@ io.on("connection", (socket) => {
     socket.on("SEND_MESSAGE", (data) => {
         io.emit("NEW_MESSAGE", data)
     })
+    socket.on("TYPING", (user) => {
+        io.emit("PEER_TYPING", user)
+    })    
 })

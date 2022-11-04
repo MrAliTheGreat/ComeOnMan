@@ -1,7 +1,7 @@
 <template>
     <div class="root-div">
         <TitleView :isChat="isChat" />
-        <ChatView v-if="isChat" :isChat="isChat"/>
+        <ChatView v-if="isChat"/>
         <Transition name="fade" mode="out-in">
             <ChatInputView v-if="isChat" :user="user"/>
             <LoginInputView v-else 

@@ -12,12 +12,21 @@ export default {
     data() {
         return {
             message: {},
+            hasEmitted: false,
         }
     },
     props: ["user"],
     methods:{
-        onInput(event) {
+        onInput(event) {            
             this.message.content = event.target.value
+            if(!this.hasEmitted){
+                this.$socket.emit("TYPING", { ...this.user, doneTyping: false })
+                this.hasEmitted = true
+            }
+            if(!this.message.content){
+                this.$socket.emit("TYPING", { ...this.user, doneTyping: true })
+                this.hasEmitted = false
+            }            
         },
         onSubmit(){
             if(this.message.content){
@@ -25,10 +34,12 @@ export default {
                 this.message.user = this.user
                 this.message.time = new Date().toLocaleTimeString()
                 this.$socket.emit("SEND_MESSAGE", this.message)
+                this.$socket.emit("TYPING", { ...this.user, doneTyping: true })
+                this.hasEmitted = false
                 this.message.content = ""
             }
         }
-    },     
+    },    
 }
 </script>
 

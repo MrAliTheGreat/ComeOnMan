@@ -29,7 +29,7 @@ export default {
             }            
         },
         onSubmit(){
-            if(this.message.content){
+            if(this.message.content && this.message.content.replaceAll("\n", "") !== "" ){
                 this.$refs.chatText ? this.$refs.chatText.value = "" : null
                 this.message.user = this.user
                 this.message.time = new Date().toLocaleTimeString()

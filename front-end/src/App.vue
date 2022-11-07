@@ -34,7 +34,7 @@ export default {
         ChatInputView,
     },
     methods: {
-        onUserSubmit({ name, avatar, socketID}) {
+        onUserSubmit({ name, avatar, socketID }) {
             this.user.name = name
             this.user.avatar = avatar
             this.user.socketID = socketID

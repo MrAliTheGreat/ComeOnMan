@@ -11,25 +11,25 @@
                     :class="getMessageClassName(user.socketID)"
                 >
                     <div class="message" v-if="user.socketID === $socket.id" >
-                        <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-right: 20px;">
-                            <span style="margin: 10px; word-break: break-word; white-space: pre-wrap;">{{ content }}</span>
-                            <span style="font-size: 10px; margin-bottom: 5px;">{{ time }}</span>
+                        <div class="own-msg-container">
+                            <span class="msg-content">{{ content }}</span>
+                            <span class="own-msg-time">{{ time }}</span>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="user-container">
                             <img :src="user.avatar"/>
                             <span class="username">{{ user.name }}</span>
                         </div>
                     </div>
                     <div class="message" v-else>
-                        <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="user-container">
                             <img :src="user.avatar"/>
                             <span class="username">{{ user.name }}</span>
                         </div>                
-                        <div style="display: flex; flex-direction: column; flex: 1; justify-content: space-between ; margin-left: 10px;">
-                            <span style="margin: 10px; word-break: break-word; white-space: pre-wrap;">{{ content }}</span>
-                            <span style="font-size: 10px; margin-bottom: 5px; align-self: flex-end;">{{ time }}</span>
+                        <div class="peer-msg-container">
+                            <span class="msg-content">{{ content }}</span>
+                            <span class="peer-msg-time">{{ time }}</span>
                         </div>
-                    </div>   
+                    </div>
                 </div>
             </transition-group>
         </div>
@@ -61,7 +61,7 @@ export default {
             if(this.typing_peers.length === 1) {
                 return this.typing_peers[0].name + " is typing..."
             }
-            return this.typing_peers.map(peer => peer.name).join(", ") + "are typing..."
+            return this.typing_peers.map(peer => peer.name).join(", ") + " are typing..."
         }
     },
     mounted(){ 
@@ -203,9 +203,48 @@ img {
 .typing-msg {
     font-family: 'SF Pro Display', sans-serif;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 14px;
     color: white;
     animation: popup 1s infinite;
+}
+
+.own-msg-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+    margin-right: 20px;
+}
+
+.peer-msg-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between ;
+    margin-left: 10px;
+}
+
+.msg-content {
+    margin: 10px;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.own-msg-time {
+    font-size: 10px;
+    margin-bottom: 5px;
+}
+
+.peer-msg-time {
+    font-size: 10px;
+    margin-bottom: 5px;
+    align-self: flex-end;
+}
+
+.user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 @keyframes popup{
@@ -215,7 +254,7 @@ img {
     }
     50% {
         opacity: 1;
-        transform: scale(1.25);
+        transform: scale(1.2);
     }
     100% {
         opacity: 0.5;

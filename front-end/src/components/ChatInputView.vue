@@ -1,7 +1,7 @@
 <template>
     <div class="main-div" >
         <img :src="user.avatar" />
-        <textarea placeholder="What You Wanna Talk About..." @input="onInput" @keyup.enter.exact="onSubmit" ref="chatText"></textarea>
+        <textarea placeholder="What You Wanna Talk About..." @input="onInput" @keydown.enter.exact.prevent="onSubmit" ref="chatText"></textarea>
         <button @click="onSubmit"> Send! </button>
     </div>
 </template>

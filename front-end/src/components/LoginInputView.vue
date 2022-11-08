@@ -14,7 +14,7 @@
                 />
             </div>
         </div>
-        <input placeholder="What Should We Call You?" @input="onInput" @keyup.enter.exact="onSubmit"/>
+        <input placeholder="What Should We Call You?" @input="onInput" @keydown.enter.exact.prevent="onSubmit"/>
         <button @click="onSubmit"> Login! </button>
     </div>
 </template>

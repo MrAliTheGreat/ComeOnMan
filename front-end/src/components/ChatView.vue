@@ -4,13 +4,16 @@
             <div v-if="!chat.length" class="greeting">
                 Start Chatting Now...
             </div>
-            <transition-group v-else name="slide" class="chat-wrapper">
+            <transition-group v-else name="slide" class="chat-wrapper" @before-leave="onBeforeLeave">
                 <div 
-                    v-for="{ user, content, time } in chat"
-                    :key="time + user.name"
+                    v-for="{ user, content, time }, index in chat"
+                    :key="time + content"
                     :class="getMessageClassName(user.socketID)"
                 >
-                    <div class="message" v-if="user.socketID === $socket.id" >
+                    <div class="message" v-if="user.socketID === $socket.id"
+                        @mousedown.right="onMessageDelete(index)"
+                        oncontextmenu="return false"
+                    >
                         <div class="own-msg-container">
                             <span class="msg-content">{{ content }}</span>
                             <span class="own-msg-time">{{ time }}</span>
@@ -52,6 +55,17 @@ export default {
         getMessageClassName(id) {
             return id === this.$socket.id ? "own-wrapper" : "peer-wrapper"
         },
+        onBeforeLeave(el) {
+            const {marginLeft, marginTop, width, height} = window.getComputedStyle(el)
+            el.style.left = `${el.offsetLeft - parseFloat(marginLeft, 10)}px`
+            el.style.top = `${el.offsetTop - parseFloat(marginTop, 10)}px`
+            el.style.width = width
+            el.style.height = height
+        },
+        onMessageDelete(index) {
+            this.$socket.emit("DELETE_MESSAGE", this.chat[index])
+            this.chat.splice(index, 1)
+        }
     },
     computed: {
         typingMessage() {
@@ -76,6 +90,17 @@ export default {
                     this.typing_peers = [...this.typing_peers, peer]
                 }
             }
+        })
+        this.$socket.on("PEER_DELETE_MESSAGE", (data) => {
+            this.chat = this.chat.filter((msg) => {
+                return !(
+                    msg.content === data.content &&
+                    msg.time === data.time &&
+                    msg.user.name === data.user.name &&
+                    msg.user.avatar === data.user.avatar &&
+                    msg.user.socketID === data.user.socketID
+                )
+            })
         })
     }
 }
@@ -196,6 +221,11 @@ img {
     animation: slideIn 1s ease;
 }
 
+.slide-leave-active {
+    animation: popout 0.5s ease;
+    position: absolute;
+}
+
 .slide-move {
     transition: transform 0.5s;
 }
@@ -259,6 +289,17 @@ img {
     100% {
         opacity: 0.5;
         transform: scale(1);
+    }    
+}
+
+@keyframes popout{
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
     }    
 }
 

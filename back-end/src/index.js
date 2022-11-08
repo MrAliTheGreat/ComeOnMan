@@ -25,5 +25,8 @@ io.on("connection", (socket) => {
     })
     socket.on("TYPING", (user) => {
         io.emit("PEER_TYPING", user)
+    })
+    socket.on("DELETE_MESSAGE", (user) => {
+        io.emit("PEER_DELETE_MESSAGE", user)
     })    
 })

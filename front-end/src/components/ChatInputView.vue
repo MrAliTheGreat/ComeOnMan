@@ -1,7 +1,13 @@
 <template>
     <div class="main-div" >
         <img :src="user.avatar" />
-        <textarea placeholder="What You Wanna Talk About..." @input="onInput" @keydown.enter.exact.prevent="onSubmit" ref="chatText"></textarea>
+        <textarea
+            placeholder="What You Wanna Talk About..."
+            @input="onInput"
+            @keydown.enter.exact.prevent="onSubmit"
+            ref="chatText"
+            :value="message.content"
+        ></textarea>
         <button @click="onSubmit"> Send! </button>
     </div>
 </template>
@@ -11,34 +17,42 @@ export default {
     name: "ChatInputView",
     data() {
         return {
-            message: {},
-            hasEmitted: false,
+            message: { content: "", type: "normal" },
+            hasEmittedTyping: false,
         }
     },
-    props: ["user"],
+    props: ["user", "editMessage"],
+    watch: {
+        editMessage(val) {
+            this.message = val
+            this.message.type = "edit"
+        }
+    },
     methods:{
-        onInput(event) {            
+        onInput(event) {
             this.message.content = event.target.value
-            if(!this.hasEmitted){
+            if(!this.hasEmittedTyping){
                 this.$socket.emit("TYPING", { ...this.user, doneTyping: false })
-                this.hasEmitted = true
+                this.hasEmittedTyping = true
             }
             if(!this.message.content){
                 this.$socket.emit("TYPING", { ...this.user, doneTyping: true })
-                this.hasEmitted = false
+                this.hasEmittedTyping = false
             }            
         },
         onSubmit(){
             this.message.content = this.message.content.trim()
             if(this.message.content){
-                this.$refs.chatText ? this.$refs.chatText.value = "" : null
-                this.message.user = this.user
-                this.message.time = new Date().toLocaleTimeString()
+                if(this.message.type === "normal") {
+                    this.message.user = this.user
+                    this.message.time = new Date().toLocaleTimeString()
+                    this.message.type = "normal"
+                }
                 this.$socket.emit("SEND_MESSAGE", this.message)
                 this.$socket.emit("TYPING", { ...this.user, doneTyping: true })
-                this.hasEmitted = false
-                this.message.content = ""
-            }
+                this.hasEmittedTyping = false
+                this.message = { content: "", type: "normal" }
+            }            
         }
     },    
 }
@@ -85,13 +99,14 @@ button{
     font-family: 'SF Pro Display', sans-serif;
     font-weight: bold;
     font-size: 16px;
-    background-color: #FDFF61;
+    background-color: #d3005f;
+    color: white;
     border: 2px solid #101010;
     box-shadow: 10px 0px 15px #000000;
 }
 
 button:active {
-    background-color: #ACAD42;
+    background-color: #ff509f;
     transform: translateY(1px);
 }
 

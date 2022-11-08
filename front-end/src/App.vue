@@ -1,9 +1,9 @@
 <template>
     <div class="root-div">
         <TitleView :isChat="isChat" />
-        <ChatView v-if="isChat"/>
+        <ChatView v-if="isChat" @messageEdit="onMessageEdit" />
         <Transition name="fade" mode="out-in">
-            <ChatInputView v-if="isChat" :user="user"/>
+            <ChatInputView v-if="isChat" :user="user" :editMessage="editMessage" />
             <LoginInputView v-else 
                 :isChat="isChat"
                 @chat="onChat"
@@ -25,6 +25,7 @@ export default {
         return {
             user: {},
             isChat: false,
+            editMessage: {},
         }
     },
     components: {
@@ -41,7 +42,10 @@ export default {
         },
         onChat(chat) {
             this.isChat = this.user.name && chat
-        }
+        },
+        onMessageEdit(msg) {
+            this.editMessage = msg
+        },
     }
 }
 </script>

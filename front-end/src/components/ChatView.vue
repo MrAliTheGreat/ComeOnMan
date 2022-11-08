@@ -6,17 +6,18 @@
             </div>
             <transition-group v-else name="slide" class="chat-wrapper" @before-leave="onBeforeLeave">
                 <div 
-                    v-for="{ user, content, time }, index in chat"
+                    v-for="{ user, content, time, type }, index in chat"
                     :key="time + content"
                     :class="getMessageClassName(user.socketID)"
                 >
                     <div class="message" v-if="user.socketID === $socket.id"
                         @mousedown.right="onMessageDelete(index)"
-                        oncontextmenu="return false"
+                        @contextmenu.prevent="onMessageDelete(index)"
+                        @click="onMessageEdit(index)"
                     >
                         <div class="own-msg-container">
                             <span class="msg-content">{{ content }}</span>
-                            <span class="own-msg-time">{{ time }}</span>
+                            <span class="own-msg-time">{{ time }}&nbsp;&nbsp;{{type === "edit" ? "edited" : ""}}</span>
                         </div>
                         <div class="user-container">
                             <img :src="user.avatar"/>
@@ -65,6 +66,9 @@ export default {
         onMessageDelete(index) {
             this.$socket.emit("DELETE_MESSAGE", this.chat[index])
             this.chat.splice(index, 1)
+        },
+        onMessageEdit(index) {
+            this.$emit("messageEdit", structuredClone(this.chat[index]))
         }
     },
     computed: {
@@ -80,7 +84,19 @@ export default {
     },
     mounted(){ 
         this.$socket.on("NEW_MESSAGE", (data) => {
-            this.chat = [data, ...this.chat]
+            if(data.type === "normal") {
+                this.chat = [data, ...this.chat]
+            }
+            else if(data.type === "edit") {
+                this.chat = this.chat.map((msg) => {
+                    return (
+                        msg.time === data.time &&
+                        msg.user.name === data.user.name &&
+                        msg.user.avatar === data.user.avatar &&
+                        msg.user.socketID === data.user.socketID
+                    ) ? data : msg
+                })
+            }
         })
         this.$socket.on("PEER_TYPING", (peer) => {
             if(peer.socketID !== this.$socket.id){

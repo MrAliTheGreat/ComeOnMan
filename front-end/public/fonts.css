@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('./fonts/SFPRODISPLAYREGULAR.OTF');
+}
+
+@font-face {
+    font-family: 'SignPainter HouseScript';
+    src: url('./fonts/SignPainterHouseScript.ttf');
+}

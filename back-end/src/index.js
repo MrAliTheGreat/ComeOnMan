@@ -1,24 +1,29 @@
 const ConnectionConfig = require("../../ConnectionConfig")
 
+const fs = require("fs")
+const key = fs.readFileSync("./key.pem")
+const cert = fs.readFileSync("./cert.pem")
+
 const express = require("express")
+const https = require("https")
 
 const app = express()
+const server = https.createServer({key, cert}, app)
 
 app.get("/", (_, res) => {
     res.send("Welcome to ComeOnMan Backend Server!")
 })
 
-const server = app.listen(ConnectionConfig.expressPort, ConnectionConfig.serverVirtualIP, () => {
+server.listen(ConnectionConfig.expressPort, ConnectionConfig.serverVirtualIP, () => {
     console.log(`Express: Listening on port ${ConnectionConfig.expressPort}!`)
 })
 
 const io = require("socket.io")(server, {
-    origins: [`http://${ConnectionConfig.serverVirtualIP}:${ConnectionConfig.expressPort}/`],
+    origins: [`https://${ConnectionConfig.serverVirtualIP}:${ConnectionConfig.expressPort}/`],
     cors: true
 })
 
 io.on("connection", (socket) => {
-    //
     console.log(socket.id)
 
     socket.on("SEND_MESSAGE", (data) => {

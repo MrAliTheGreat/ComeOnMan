@@ -57,7 +57,8 @@ export default {
                     max: 480
                 },
                 frameRate: 15
-            }
+            },
+            audio: true
         })
         .then((stream) => {
             this.localStream = stream
@@ -75,7 +76,9 @@ export default {
         })
 
         this.peerConnection.ontrack = (event) => {
-            this.remoteStreams.push(event.streams[0])
+            if(!this.remoteStreams.includes(event.streams[0])){
+                this.remoteStreams.push(event.streams[0])
+            }
         }
     },
 }

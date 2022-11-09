@@ -1,6 +1,6 @@
 <template>
     <div class="root-div">
-        <TitleView :isChat="isChat" />
+        <!-- <TitleView :isChat="isChat" />
         <ChatView v-if="isChat" @messageEdit="onMessageEdit" />
         <Transition name="fade" mode="out-in">
             <ChatInputView v-if="isChat" :user="user" :editMessage="editMessage" />
@@ -9,15 +9,17 @@
                 @chat="onChat"
                 @userSubmit="onUserSubmit"
             />
-        </Transition>
+        </Transition> -->
+        <VideoView />
     </div>
 </template>
 
 <script>
-import TitleView from './components/TitleView.vue';
-import LoginInputView from './components/LoginInputView.vue';
-import ChatInputView from './components/ChatInputView.vue';
-import ChatView from "./components/ChatView.vue"
+// import TitleView from './components/TitleView.vue';
+// import LoginInputView from './components/LoginInputView.vue';
+// import ChatInputView from './components/ChatInputView.vue';
+// import ChatView from "./components/ChatView.vue"
+import VideoView from './components/VideoView.vue';
 
 export default {
     name: "App",
@@ -29,10 +31,11 @@ export default {
         }
     },
     components: {
-        TitleView,
-        LoginInputView,
-        ChatView,
-        ChatInputView,
+        // TitleView,
+        // LoginInputView,
+        // ChatView,
+        // ChatInputView,
+        VideoView,
     },
     methods: {
         onUserSubmit({ name, avatar, socketID }) {

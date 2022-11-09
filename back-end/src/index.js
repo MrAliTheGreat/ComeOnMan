@@ -18,6 +18,7 @@ const io = require("socket.io")(server, {
 })
 
 io.on("connection", (socket) => {
+    //
     console.log(socket.id)
 
     socket.on("SEND_MESSAGE", (data) => {
@@ -28,5 +29,15 @@ io.on("connection", (socket) => {
     })
     socket.on("DELETE_MESSAGE", (user) => {
         io.emit("PEER_DELETE_MESSAGE", user)
+    })
+    
+    socket.on("RTC_NEW_CANDIDATE", (candidate) => {
+        socket.broadcast.emit("ICE_CANDIDATE", candidate)
+    })
+    socket.on("RTC_NEW_OFFER", (offer) => {
+        socket.broadcast.emit("OFFER", offer)
+    })
+    socket.on("RTC_NEW_ANSWER", ({ answer, receiver }) => {
+        io.to(receiver).emit("ANSWER", answer)
     })    
 })

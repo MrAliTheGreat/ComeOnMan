@@ -19,7 +19,7 @@ server.listen(ConnectionConfig.expressPort, ConnectionConfig.serverVirtualIP, ()
 })
 
 const io = require("socket.io")(server, {
-    origins: [`https://${ConnectionConfig.serverVirtualIP}:${ConnectionConfig.expressPort}/`],
+    origins: [`//${ConnectionConfig.serverVirtualIP}:${ConnectionConfig.expressPort}/`],
     cors: true
 })
 

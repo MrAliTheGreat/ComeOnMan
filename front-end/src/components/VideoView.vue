@@ -1,11 +1,13 @@
 <template>
     <div>
-        <video autoplay playsinline :srcObject.prop="localStream"></video>
+        <video autoplay playsinline muted :srcObject.prop="localStream"></video>
         <video v-for="remoteStream, index in remoteStreams" :key="index" autoplay playsinline :srcObject.prop="remoteStream"></video>
     </div>
 </template>
 
 <script>
+import "webrtc-adapter"
+
 export default {
     // In case of problems we should import adapter.js!
     name: "VideoView",
@@ -13,7 +15,20 @@ export default {
         return {
             localStream: null,
             remoteStreams: [],
-            peerConnection: new RTCPeerConnection(),
+            peerConnection: new RTCPeerConnection(
+                {
+                    'iceServers': [
+                        {
+                            'urls': 'stun:stun.l.google.com:19302'
+                        },
+                        {
+                            'urls': 'turn:192.158.29.39:3478?transport=udp',
+                            'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                            'username': '28224511:1379330808'
+                        },
+                    ]
+                }                
+            ),
         }
     },
     methods: {
@@ -21,6 +36,8 @@ export default {
     },
     mounted() {
         this.$socket.on("ICE_CANDIDATE", (candidate) => {
+            console.log("RECEIVED - ICE")
+            console.log(candidate)
             this.peerConnection.addIceCandidate(candidate)
         })
         this.$socket.on("OFFER", ({ offer, owner }) => {
@@ -38,11 +55,15 @@ export default {
             })
         })
         this.$socket.on("ANSWER", (answer) => {
+            console.log("answer!")
+            console.log(answer)            
             this.peerConnection.setRemoteDescription(answer)
         })
 
 
         this.peerConnection.onicecandidate = (event) => {
+            console.log("SEND - ICE")
+            console.log(event.candidate)            
             if(event.candidate) {
                 this.$socket.emit("RTC_NEW_CANDIDATE", event.candidate)
             }
@@ -54,7 +75,7 @@ export default {
                     max: 640
                 },
                 height: {
-                    max: 480
+                    max: 360
                 },
                 frameRate: 15
             },
@@ -69,6 +90,8 @@ export default {
             return this.peerConnection.setLocalDescription(offer)
         })
         .then(() => {
+            console.log("offer")
+            console.log(this.peerConnection.localDescription)
             this.$socket.emit("RTC_NEW_OFFER", {
                 offer: this.peerConnection.localDescription,
                 owner: this.$socket.id,
@@ -76,6 +99,8 @@ export default {
         })
 
         this.peerConnection.ontrack = (event) => {
+            console.log("streams")
+            console.log(event.streams)
             if(!this.remoteStreams.includes(event.streams[0])){
                 this.remoteStreams.push(event.streams[0])
             }

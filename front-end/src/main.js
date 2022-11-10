@@ -5,7 +5,7 @@ import { io } from "socket.io-client"
 import { serverVirtualIP, expressPort } from "../../ConnectionConfig"
 
 // Socket is accessible globally via this.$socket
-Vue.prototype.$socket = io(`https://${serverVirtualIP}:${expressPort}/`);
+Vue.prototype.$socket = io(`//${serverVirtualIP}:${expressPort}/`);
 
 new Vue({
     el: "#app",

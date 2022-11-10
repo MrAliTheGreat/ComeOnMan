@@ -1,22 +1,73 @@
 <template>
-    <div :class="[isChat ? 'on-top-title' : 'title']">
-        ComeO<span class="flicker-slow">nM</span><span class="flicker-fast">an!</span>
+    <div class="main-div" >
+        <div v-if="isChat" style="flex: 1;"> </div>
+        <div :class="[isChat ? 'on-top-title' : 'title']">
+            ComeO<span class="flicker-slow">nM</span><span class="flicker-fast">an!</span>
+        </div>
+        <Transition @before-enter="beforeEnter" @after-enter="afterEnter">
+            <div v-if="isChat" style="flex: 1; display: flex; justify-content: flex-end; height: 65px;">
+                <img src="/video-call.png" />
+            </div>
+        </Transition>
     </div>
 </template>
 
 <script>
 export default {
     name: "TitleView",
-    props: ["isChat"]
+    props: ["isChat"],
+    methods: {
+        beforeEnter(el) {
+            el.firstChild.style = "display: none"
+        },
+        afterEnter(el) {
+            setTimeout(() => {
+                el.firstChild.style = ""
+                el.firstChild.className = "video-icon"
+            }, 5000)
+        }
+    }
 }
 </script>
 
 <style scoped>
+.main-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .title {
     color: #FFFFFF;
     font-family: "SignPainter HouseScript", sans-serif;
     font-size: 80px;
     text-shadow: 5px 0px 50px #888888;
+    display: flex;
+    align-items: center;
+}
+
+.on-top-title {
+    flex: 0;
+    color: #FFFFFF;
+    font-family: "SignPainter HouseScript", sans-serif;
+    text-shadow: 5px 0px 50px #888888;
+    animation: moveToTop 4s forwards;
+    display: flex;
+    align-items: center;
+}
+
+.video-icon {
+    height: 55px;
+    margin: 5px;
+    animation: fadeIn 0.75s ease;
+}
+
+.video-icon:hover {
+    cursor: pointer;
+}
+
+.video-icon:active {
+    opacity: 0.6;
 }
 
 .flicker-slow {
@@ -36,20 +87,31 @@ export default {
     }
 }
 
-.on-top-title {
-    flex: 0;
-    color: #FFFFFF;
-    font-family: "SignPainter HouseScript", sans-serif;
-    text-shadow: 5px 0px 50px #888888;
-    animation: moveToTop 4s forwards;
-}
-
 @keyframes moveToTop{
     0% {
         font-size: 80px;
     }
     100% {
         font-size: 40px;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+}
+
+@media (max-width:850px) {
+    .main-div {
+        width: 100vw;
+    }
+}
+
+@media (min-width:851px) {
+    .main-div {
+        width: 70vw;
     }
 }
 </style>

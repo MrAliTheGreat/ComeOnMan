@@ -9,7 +9,6 @@
 import "webrtc-adapter"
 
 export default {
-    // In case of problems we should import adapter.js!
     name: "VideoView",
     data() {
         return {
@@ -36,8 +35,6 @@ export default {
     },
     mounted() {
         this.$socket.on("ICE_CANDIDATE", (candidate) => {
-            console.log("RECEIVED - ICE")
-            console.log(candidate)
             this.peerConnection.addIceCandidate(candidate)
         })
         this.$socket.on("OFFER", ({ offer, owner }) => {
@@ -54,16 +51,12 @@ export default {
                 })
             })
         })
-        this.$socket.on("ANSWER", (answer) => {
-            console.log("answer!")
-            console.log(answer)            
+        this.$socket.on("ANSWER", (answer) => {          
             this.peerConnection.setRemoteDescription(answer)
         })
 
 
-        this.peerConnection.onicecandidate = (event) => {
-            console.log("SEND - ICE")
-            console.log(event.candidate)            
+        this.peerConnection.onicecandidate = (event) => {          
             if(event.candidate) {
                 this.$socket.emit("RTC_NEW_CANDIDATE", event.candidate)
             }
@@ -72,12 +65,12 @@ export default {
         navigator.mediaDevices.getUserMedia({
             video: {
                 width: {
-                    max: 640
+                    max: 852
                 },
                 height: {
-                    max: 360
+                    max: 480
                 },
-                frameRate: 15
+                frameRate: 30
             },
             audio: true
         })
@@ -90,8 +83,6 @@ export default {
             return this.peerConnection.setLocalDescription(offer)
         })
         .then(() => {
-            console.log("offer")
-            console.log(this.peerConnection.localDescription)
             this.$socket.emit("RTC_NEW_OFFER", {
                 offer: this.peerConnection.localDescription,
                 owner: this.$socket.id,
@@ -99,8 +90,6 @@ export default {
         })
 
         this.peerConnection.ontrack = (event) => {
-            console.log("streams")
-            console.log(event.streams)
             if(!this.remoteStreams.includes(event.streams[0])){
                 this.remoteStreams.push(event.streams[0])
             }

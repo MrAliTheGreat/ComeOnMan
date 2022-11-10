@@ -1,12 +1,13 @@
 <template>
     <div class="main-div" >
-        <div v-if="isChat" style="flex: 1;"> </div>
-        <div :class="[isChat ? 'on-top-title' : 'title']">
+        <div v-if="isChat || isVideo" style="flex: 1;"> </div>
+        <div :class="[isChat || isVideo ? 'on-top-title' : 'title']">
             ComeO<span class="flicker-slow">nM</span><span class="flicker-fast">an!</span>
         </div>
         <Transition @before-enter="beforeEnter" @after-enter="afterEnter">
-            <div v-if="isChat" style="flex: 1; display: flex; justify-content: flex-end; height: 65px;">
-                <img src="/video-call.png" />
+            <div v-if="isChat || isVideo" style="flex: 1; display: flex; justify-content: flex-end; height: 65px;">
+                <img v-if="isChat" src="/video-call.png" @click="onVideoCall"/>
+                <img v-if="isVideo" src="/chat.png" @click="onChat"/>
             </div>
         </Transition>
     </div>
@@ -15,7 +16,7 @@
 <script>
 export default {
     name: "TitleView",
-    props: ["isChat"],
+    props: ["isChat", "isVideo"],
     methods: {
         beforeEnter(el) {
             el.firstChild.style = "display: none"
@@ -25,6 +26,12 @@ export default {
                 el.firstChild.style = ""
                 el.firstChild.className = "video-icon"
             }, 5000)
+        },
+        onVideoCall() {
+            this.$emit("videoCallStart")
+        },
+        onChat() {
+            this.$emit("chat", true)
         }
     }
 }
@@ -68,6 +75,7 @@ export default {
 
 .video-icon:active {
     opacity: 0.6;
+    transform: translateY(1px);
 }
 
 .flicker-slow {

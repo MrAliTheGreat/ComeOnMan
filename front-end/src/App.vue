@@ -1,16 +1,16 @@
 <template>
     <div class="root-div">
-        <TitleView :isChat="isChat"/>
-        <ChatView v-if="isChat" @messageEdit="onMessageEdit" />
+        <TitleView :isChat="isChat" :isVideo="isVideo" @videoCallStart="onVideoCallStart" @chat="onChat"/>
+        <ChatView v-if="isChat || isVideo" @messageEdit="onMessageEdit" :isChat="isChat" :isVideo="isVideo" />
         <Transition name="fade" mode="out-in">
-            <ChatInputView v-if="isChat" :user="user" :editMessage="editMessage" />
-            <LoginInputView v-else 
+            <ChatInputView v-if="isChat && !isVideo" :user="user" :editMessage="editMessage" />
+            <LoginInputView v-else-if="!isChat && !isVideo" 
                 :isChat="isChat"
+                :isVideo="isVideo"
                 @chat="onChat"
                 @userSubmit="onUserSubmit"
             />
         </Transition>
-        <VideoView v-if="isVideo" />
     </div>
 </template>
 
@@ -19,7 +19,6 @@ import TitleView from './components/TitleView.vue';
 import LoginInputView from './components/LoginInputView.vue';
 import ChatInputView from './components/ChatInputView.vue';
 import ChatView from "./components/ChatView.vue"
-import VideoView from './components/VideoView.vue';
 
 export default {
     name: "App",
@@ -36,7 +35,6 @@ export default {
         LoginInputView,
         ChatView,
         ChatInputView,
-        VideoView,
     },
     methods: {
         onUserSubmit({ name, avatar, socketID }) {
@@ -46,10 +44,15 @@ export default {
         },
         onChat(chat) {
             this.isChat = this.user.name && chat
+            this.isVideo = false
         },
         onMessageEdit(msg) {
             this.editMessage = msg
         },
+        onVideoCallStart() {
+            this.isVideo = true
+            this.isChat = false
+        }
     }
 }
 </script>

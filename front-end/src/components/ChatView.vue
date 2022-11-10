@@ -1,6 +1,7 @@
 <template>    
     <div class="on-middle">
-        <div class="on-middle">   
+        <VideoView v-if="isVideo" />
+        <div v-if="isChat" class="on-middle">   
             <div v-if="!chat.length" class="greeting">
                 Start Chatting Now...
             </div>
@@ -37,13 +38,16 @@
                 </div>
             </transition-group>
         </div>
-        <span v-if="typing_peers.length" class="typing-msg">
+        <!-- Bug in peer is typing when switching between video and chat on type!!! -->
+        <span v-if="typing_peers.length && isChat" class="typing-msg">
             {{ typingMessage }}
         </span>
     </div>
 </template>
 
 <script>
+import VideoView from './VideoView.vue';
+
 export default {
     name: "ChatView",
     data() {
@@ -52,6 +56,10 @@ export default {
             typing_peers: [],
         }
     },
+    components: {
+        VideoView,
+    },
+    props: [ "isChat", "isVideo" ],
     methods: {
         getMessageClassName(id) {
             return id === this.$socket.id ? "own-wrapper" : "peer-wrapper"

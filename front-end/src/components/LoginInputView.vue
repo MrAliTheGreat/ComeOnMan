@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex;" :class="[isChat ? 'on-bottom' : '']" ref="login" >
+    <div :class="[isChat ? 'on-bottom' : isVideo ? 'remove' : 'start']" ref="login" >
         <div class="dropdown">
             <Transition name="avatar-change" mode="out-in">
                 <img :src="avatar" :key="avatar" />
@@ -28,7 +28,7 @@ export default {
             username: ""
         }
     },
-    props: [ "isChat" ],
+    props: [ "isChat", "isVideo" ],
     methods: {
         onInput(event) {
             this.username = event.target.value
@@ -122,6 +122,7 @@ button:active {
     background-color: #606060;
 }
 .on-bottom {
+    display: flex;
     flex: 0;
     margin-bottom: 1px;
 }
@@ -141,6 +142,14 @@ button:active {
 
 .no-username {
     animation: shake 0.6s ease;
+}
+
+.start {
+    display: flex;
+}
+
+.remove {
+    display: none;
 }
 
 @keyframes shake {

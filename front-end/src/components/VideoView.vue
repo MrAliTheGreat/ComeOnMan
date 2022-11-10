@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="on-middle">
         <video autoplay playsinline muted :srcObject.prop="localStream"></video>
         <video v-for="remoteStream, index in remoteStreams" :key="index" autoplay playsinline :srcObject.prop="remoteStream"></video>
     </div>
@@ -29,9 +29,6 @@ export default {
                 }                
             ),
         }
-    },
-    methods: {
-
     },
     mounted() {
         this.$socket.on("ICE_CANDIDATE", (candidate) => {
@@ -101,10 +98,11 @@ export default {
 <style scoped>
 video {
     border-radius: 20px;
-    border: 10px solid red;
 }
 
-button {
-    background-color: white;
+.on-middle {
+    display: flex;
+    align-items: center;
+    flex: 1;
 }
 </style>

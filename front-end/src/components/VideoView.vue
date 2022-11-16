@@ -4,8 +4,8 @@
             <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
             <div class="controls-container">
                 <div style="border-bottom: 1px solid white">
-                    <img src="/video-off.png" @click="onEndCall"/>
-                    <img src="/mic-off.png" @click="onEndCall"/>
+                    <img src="/video-off.png" @click="onVideoOff"/>
+                    <img src="/mic-off.png" @click="onMicOff"/>
                 </div>
                 <img src="/hangup.png" @click="onEndCall"/>
             </div>
@@ -133,15 +133,30 @@ export default {
             }
         },
         onEndCall() {
-
+            this.$emit("chat")
         },
+        onVideoOff(event) {
+            event.target.className === "" ?  event.target.className = "img-selected" : event.target.className = ""
+            this.localStream.getVideoTracks().forEach((videoTrack) => {
+                videoTrack.enabled = !videoTrack.enabled
+            })
+        },
+        onMicOff(event) {
+            event.target.className === "" ?  event.target.className = "img-selected" : event.target.className = ""
+            this.localStream.getAudioTracks().forEach((audioTrack) => {
+                audioTrack.enabled = !audioTrack.enabled
+            })
+        }
     },
     beforeDestroy() {
-        // this.stopLocalMedia("video")
-        // this.stopLocalMedia("audio")
-        // this.peerConnection.close()
-        // this.peerConnection = null
-        // this.$socket.emit("RTC_CALL_ENDED")
+        this.stopLocalMedia("video")
+        this.stopLocalMedia("audio")
+        this.localStream.getTracks().forEach((track) => {
+            track.stop()
+        })
+        this.peerConnection.close()
+        this.peerConnection = null
+        this.$socket.emit("RTC_CALL_ENDED")
     }
 }
 </script>
@@ -241,6 +256,7 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin: 10px;
     }
 
     .controls-container{
@@ -248,7 +264,6 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
-        align-self: flex-start;
     }
 
     .local-start {
@@ -291,9 +306,10 @@ export default {
     }
 
     img {
-        height: 60px;
-        width: 60px;
-        margin: 10px;
+        height: 70px;
+        width: 70px;
+        margin: 5px;
+        border-radius: 50%;
     }
 
     img:hover {
@@ -302,6 +318,16 @@ export default {
 
     img:active {
         opacity: 0.5;
+    }
+
+    .img-selected {
+        height: 70px;
+        width: 70px;
+        margin: 5px;
+        padding: 6px;
+        border-radius: 50%;
+        border: 2px solid #C10C5E;
+        box-shadow: 0px 0px 10px #C10C5E;
     }
 
     @keyframes expand {

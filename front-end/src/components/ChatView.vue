@@ -1,6 +1,10 @@
 <template>    
     <div class="on-middle">
-        <VideoView v-if="isVideo" @chat="onChat" :style="hideVideo ? 'display: none;' : ''" />
+        <VideoView v-if="isVideo"
+            @chat="onChat"
+            :style="hideVideo ? 'display: none;' : ''"
+            :user="user"
+        />
         <div v-if="isChat" class="on-middle">   
             <div v-if="!chat.length" class="greeting">
                 Start Chatting Now...
@@ -58,7 +62,7 @@ export default {
     components: {
         VideoView,
     },
-    props: [ "isChat", "isVideo", "hideVideo" ],
+    props: [ "isChat", "isVideo", "hideVideo", "user" ],
     watch: {
         isVideo(newVal) {
             newVal ? this.typing_peers = [] : null

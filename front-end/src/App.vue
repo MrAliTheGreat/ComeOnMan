@@ -13,7 +13,8 @@
             @messageEdit="onMessageEdit"
             :isChat="isChat"
             :isVideo="isVideo"
-            :hideVideo="hideVideo" 
+            :hideVideo="hideVideo"
+            :user="user"
         />
         <Transition name="fade" mode="out-in">
             <ChatInputView v-if="isChat && !isVideo || isChat && hideVideo" :user="user" :editMessage="editMessage" />

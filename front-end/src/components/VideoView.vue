@@ -1,6 +1,11 @@
 <template>
     <div class="on-middle">
         <div class="local-container">
+            <img v-if="isVideoOff" 
+                :src="user.avatar"
+                class="no-video-alt"
+                @click="onLocalClick"
+            />
             <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
             <div class="controls-container">
                 <div style="border-bottom: 1px solid white">
@@ -28,6 +33,8 @@ export default {
     name: "VideoView",
     data() {
         return {
+            isVideoOff: false,
+
             localStream: null,
             remoteStreams: [],
             peerConnection: new RTCPeerConnection(
@@ -46,6 +53,7 @@ export default {
             ),
         }
     },
+    props: [ "user" ],
     mounted() {
         this.$socket.on("ICE_CANDIDATE", (candidate) => {
             this.peerConnection && this.peerConnection.connectionState !== "closed" ? this.peerConnection.addIceCandidate(candidate) : null
@@ -140,6 +148,7 @@ export default {
             this.localStream.getVideoTracks().forEach((videoTrack) => {
                 videoTrack.enabled = !videoTrack.enabled
             })
+            this.isVideoOff = !this.isVideoOff
         },
         onMicOff(event) {
             event.target.className === "" ?  event.target.className = "img-selected" : event.target.className = ""
@@ -328,6 +337,14 @@ export default {
         border-radius: 50%;
         border: 2px solid #C10C5E;
         box-shadow: 0px 0px 10px #C10C5E;
+    }
+
+    .no-video-alt {
+        position: absolute;
+        margin-top: 2.5%;
+        height: 75px;
+        width: 75px;
+        border-radius: 50%;
     }
 
     @keyframes expand {

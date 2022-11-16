@@ -44,5 +44,8 @@ io.on("connection", (socket) => {
     })
     socket.on("RTC_NEW_ANSWER", ({ answer, receiver }) => {
         io.to(receiver).emit("ANSWER", answer)
+    })
+    socket.on("RTC_CALL_ENDED", () => {
+        socket.broadcast.emit("CALL_ENDED")
     })    
 })

@@ -1,7 +1,14 @@
 <template>
     <div class="on-middle">
-        <video autoplay playsinline muted :srcObject.prop="localStream"></video>
-        <video v-for="remoteStream, index in remoteStreams" :key="index" autoplay playsinline :srcObject.prop="remoteStream"></video>
+        <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
+        <video 
+            v-for="remoteStream, index in remoteStreams"
+            :key="index"
+            autoplay
+            playsinline
+            :srcObject.prop="remoteStream"
+            class="remote"
+        ></video>
     </div>
 </template>
 
@@ -32,10 +39,10 @@ export default {
     },
     mounted() {
         this.$socket.on("ICE_CANDIDATE", (candidate) => {
-            this.peerConnection.addIceCandidate(candidate)
+            this.peerConnection && this.peerConnection.connectionState !== "closed" ? this.peerConnection.addIceCandidate(candidate) : null
         })
         this.$socket.on("OFFER", ({ offer, owner }) => {
-            this.peerConnection.setRemoteDescription(offer).then(() => {
+            this.peerConnection ? this.peerConnection.setRemoteDescription(offer).then(() => {
                 this.peerConnection.createAnswer()
             })
             .then((answer) => {
@@ -46,10 +53,10 @@ export default {
                     answer: this.peerConnection.localDescription,
                     receiver: owner,
                 })
-            })
+            }) : null
         })
         this.$socket.on("ANSWER", (answer) => {          
-            this.peerConnection.setRemoteDescription(answer)
+            this.peerConnection ? this.peerConnection.setRemoteDescription(answer) : null
         })
 
 
@@ -59,10 +66,17 @@ export default {
             }
         }
 
+        this.$socket.on("CALL_ENDED", () => {
+            if(this.peerConnection){
+                this.peerConnection.close()
+                this.$emit("chat")
+            }
+        })
+
         navigator.mediaDevices.getUserMedia({
             video: {
                 width: {
-                    max: 852
+                    max: 640
                 },
                 height: {
                     max: 480
@@ -100,22 +114,186 @@ export default {
                 }
             })
         },
+        onLocalClick() {
+            if(this.$refs.local){
+                if(this.$refs.local.className === "local-compact" || this.$refs.local.className === "local-start") {
+                    this.$refs.local.className = "local-normal"
+                    return
+                }
+                this.$refs.local.className = "local-compact"
+            }
+        }
     },
     beforeDestroy() {
-        this.stopLocalMedia("video")
-        this.stopLocalMedia("audio")
+        // this.stopLocalMedia("video")
+        // this.stopLocalMedia("audio")
+        // this.peerConnection.close()
+        // this.peerConnection = null
+        // this.$socket.emit("RTC_CALL_ENDED")
     }
 }
 </script>
 
 <style scoped>
-video {
-    border-radius: 20px;
+/* Mobile */
+@media (max-width:850px) {
+    .on-middle {
+        flex: 1;
+        flex-direction: column !important;
+    }
+
+    .local-start {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 10px;
+        border: 2px solid #7FFFCB;
+        box-shadow: 0px 0px 10px #7FFFCB;
+        align-self: center;
+    }
+
+    .local-compact {
+        object-fit: cover;
+        margin: 10px;
+        border: 2px solid #7FFFCB;
+        box-shadow: 0px 0px 10px #7FFFCB;
+        align-self: center;
+        animation: shrink 0.6s forwards;
+    }
+
+    .local-normal {
+        object-fit: cover;
+        margin: 10px;
+        border: 2px solid #7FFFCB;
+        box-shadow: 0px 0px 10px #7FFFCB;
+        align-self: center;
+        animation: expand 0.6s forwards;
+    }
+
+    .local-start:hover, .local-compact:hover, .local-normal:hover {
+        cursor: pointer;
+    }
+
+    .remote {
+        flex: 1;
+        width: 100vw;
+        object-fit: cover;
+        border-radius: 3%;
+        margin: 10px;
+        border: 2px solid #84F4FF;
+        box-shadow: 0px 0px 10px #84F4FF;
+        align-self: center;
+    }
+
+    @keyframes expand {
+        0% {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+        100% {
+            width: 100vw;
+            height: 360px;
+            border-radius: 3%;
+        }
+    }
+
+    @keyframes shrink {
+        0% {
+            width: 100vw;
+            height: 360px;
+            border-radius: 3%;
+        }
+        25% {
+            border-radius: 3%;
+        }
+        100% {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    }
 }
 
-.on-middle {
-    display: flex;
-    align-items: center;
-    flex: 1;
+/* PC */
+@media (min-width:851px) {
+    .on-middle {
+        flex: 1;
+        flex-direction: row !important;
+    }
+
+    .local-start {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 10px;
+        border: 2px solid #7FFFCB;
+        box-shadow: 0px 0px 10px #7FFFCB;
+        align-self: flex-start;
+    }
+
+    .local-compact {
+        object-fit: cover;
+        margin: 10px;
+        border: 2px solid #7FFFCB;
+        box-shadow: 0px 0px 10px #7FFFCB;
+        align-self: flex-start;
+        animation: shrink 0.6s forwards;
+    }
+
+    .local-normal {
+        object-fit: cover;
+        margin: 10px;
+        align-self: flex-start;
+        border: 2px solid #7FFFCB;
+        box-shadow: 0px 0px 10px #7FFFCB;
+        animation: expand 0.6s forwards;
+    }
+
+    .local-start:hover, .local-compact:hover, .local-normal:hover {
+        cursor: pointer;
+    }
+
+    .remote {
+        flex: 1;
+        width: 100vw;
+        border-radius: 3%;
+        border: 2px solid #84F4FF;
+        box-shadow: 0px 0px 10px #84F4FF;
+        margin: 10px;
+    }
+
+    @keyframes expand {
+        0% {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+        100% {
+            width: 480px;
+            height: 360px;
+            border-radius: 3%;
+        }
+    }
+
+    @keyframes shrink {
+        0% {
+            width: 480px;
+            height: 360px;
+            border-radius: 3%;
+        }
+        25% {
+            border-radius: 3%;
+        }
+        100% {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    }
 }
 </style>

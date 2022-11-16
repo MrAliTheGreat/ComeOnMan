@@ -1,6 +1,6 @@
 <template>    
     <div class="on-middle">
-        <VideoView v-if="isVideo" />
+        <VideoView v-if="isVideo" @chat="onChat" :style="hideVideo ? 'display: none;' : ''" />
         <div v-if="isChat" class="on-middle">   
             <div v-if="!chat.length" class="greeting">
                 Start Chatting Now...
@@ -38,7 +38,6 @@
                 </div>
             </transition-group>
         </div>
-        <!-- Bug in peer is typing when switching between video and chat on type!!! -->
         <span v-if="typing_peers.length && isChat" class="typing-msg">
             {{ typingMessage }}
         </span>
@@ -59,7 +58,7 @@ export default {
     components: {
         VideoView,
     },
-    props: [ "isChat", "isVideo" ],
+    props: [ "isChat", "isVideo", "hideVideo" ],
     watch: {
         isVideo(newVal) {
             newVal ? this.typing_peers = [] : null
@@ -82,6 +81,9 @@ export default {
         },
         onMessageEdit(index) {
             this.$emit("messageEdit", structuredClone(this.chat[index]))
+        },
+        onChat() {
+            this.$emit("chat", true)
         }
     },
     computed: {
@@ -213,7 +215,7 @@ img {
     align-self: flex-end;
     margin: 10px;
     background-color: #7FFFCB;
-    box-shadow: 0px 0px 10px #7FFFCB;  
+    box-shadow: 0px 0px 10px #7FFFCB;
     border-radius: 15px;
     padding-left: 10px;
 }

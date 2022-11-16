@@ -1,9 +1,22 @@
 <template>
     <div class="root-div">
-        <TitleView :isChat="isChat" :isVideo="isVideo" @videoCallStart="onVideoCallStart" @chat="onChat"/>
-        <ChatView v-if="isChat || isVideo" @messageEdit="onMessageEdit" :isChat="isChat" :isVideo="isVideo" />
+        <TitleView 
+            :isChat="isChat"
+            :isVideo="isVideo"
+            :hideVideo="hideVideo"
+            @videoCallStart="onVideoCallStart"
+            @hideVideo="onHideVideo"
+        />
+        <ChatView 
+            v-if="isChat || isVideo"
+            @chat="onChat"
+            @messageEdit="onMessageEdit"
+            :isChat="isChat"
+            :isVideo="isVideo"
+            :hideVideo="hideVideo" 
+        />
         <Transition name="fade" mode="out-in">
-            <ChatInputView v-if="isChat && !isVideo" :user="user" :editMessage="editMessage" />
+            <ChatInputView v-if="isChat && !isVideo || isChat && hideVideo" :user="user" :editMessage="editMessage" />
             <LoginInputView v-else-if="!isChat && !isVideo" 
                 :isChat="isChat"
                 :isVideo="isVideo"
@@ -27,6 +40,7 @@ export default {
             user: {},
             isChat: false,
             isVideo: false,
+            hideVideo: false,
             editMessage: {},
         }
     },
@@ -52,6 +66,11 @@ export default {
         onVideoCallStart() {
             this.isVideo = true
             this.isChat = false
+            this.hideVideo = false
+        },
+        onHideVideo() {
+            this.isChat = this.user.name
+            this.hideVideo = true
         }
     }
 }

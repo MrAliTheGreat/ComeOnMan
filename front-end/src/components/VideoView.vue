@@ -6,6 +6,11 @@
                 class="no-video-alt"
                 @click="onLocalClick"
             />
+            <img v-if="isAudioOff" 
+                src="/no-mic.png"
+                class="no-audio-alt"
+                @click="onLocalClick"
+            />            
             <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
             <div class="controls-container">
                 <div style="border-bottom: 1px solid white">
@@ -34,6 +39,7 @@ export default {
     data() {
         return {
             isVideoOff: false,
+            isAudioOff: false,
 
             localStream: null,
             remoteStreams: [],
@@ -155,6 +161,7 @@ export default {
             this.localStream.getAudioTracks().forEach((audioTrack) => {
                 audioTrack.enabled = !audioTrack.enabled
             })
+            this.isAudioOff = !this.isAudioOff
         }
     },
     beforeDestroy() {
@@ -341,10 +348,19 @@ export default {
 
     .no-video-alt {
         position: absolute;
-        margin-top: 2.5%;
+        margin-top: 3%;
         height: 75px;
         width: 75px;
         border-radius: 50%;
+    }
+
+    .no-audio-alt {
+        position: absolute;
+        margin-top: 0.9%;
+        height: 35px;
+        width: 35px;
+        border-radius: 50%;
+        background-color: black;
     }
 
     @keyframes expand {

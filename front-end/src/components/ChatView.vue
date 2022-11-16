@@ -60,6 +60,11 @@ export default {
         VideoView,
     },
     props: [ "isChat", "isVideo" ],
+    watch: {
+        isVideo(newVal) {
+            newVal ? this.typing_peers = [] : null
+        }
+    },
     methods: {
         getMessageClassName(id) {
             return id === this.$socket.id ? "own-wrapper" : "peer-wrapper"

@@ -1,6 +1,15 @@
 <template>
     <div class="on-middle">
-        <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
+        <div class="local-container">
+            <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
+            <div class="controls-container">
+                <div style="border-bottom: 1px solid white">
+                    <img src="/video-off.png" @click="onEndCall"/>
+                    <img src="/mic-off.png" @click="onEndCall"/>
+                </div>
+                <img src="/hangup.png" @click="onEndCall"/>
+            </div>
+        </div>
         <video 
             v-for="remoteStream, index in remoteStreams"
             :key="index"
@@ -122,7 +131,10 @@ export default {
                 }
                 this.$refs.local.className = "local-compact"
             }
-        }
+        },
+        onEndCall() {
+
+        },
     },
     beforeDestroy() {
         // this.stopLocalMedia("video")
@@ -224,6 +236,21 @@ export default {
         flex-direction: row !important;
     }
 
+    .local-container {
+        align-self: flex-start;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .controls-container{
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-self: flex-start;
+    }
+
     .local-start {
         width: 150px;
         height: 150px;
@@ -232,7 +259,6 @@ export default {
         margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
-        align-self: flex-start;
     }
 
     .local-compact {
@@ -240,14 +266,12 @@ export default {
         margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
-        align-self: flex-start;
         animation: shrink 0.6s forwards;
     }
 
     .local-normal {
         object-fit: cover;
         margin: 10px;
-        align-self: flex-start;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
         animation: expand 0.6s forwards;
@@ -264,6 +288,20 @@ export default {
         border: 2px solid #84F4FF;
         box-shadow: 0px 0px 10px #84F4FF;
         margin: 10px;
+    }
+
+    img {
+        height: 60px;
+        width: 60px;
+        margin: 10px;
+    }
+
+    img:hover {
+        cursor: pointer;
+    }
+
+    img:active {
+        opacity: 0.5;
     }
 
     @keyframes expand {

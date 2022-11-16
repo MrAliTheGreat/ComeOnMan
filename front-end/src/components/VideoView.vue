@@ -92,6 +92,19 @@ export default {
             }
         }
     },
+    methods: {
+        stopLocalMedia(mediaType) {
+            this.localStream.getTracks().forEach((track) => {
+                if(track.readyState === "live" && track.kind === mediaType) {
+                    track.stop()
+                }
+            })
+        },
+    },
+    beforeDestroy() {
+        this.stopLocalMedia("video")
+        this.stopLocalMedia("audio")
+    }
 }
 </script>
 

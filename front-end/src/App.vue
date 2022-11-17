@@ -78,9 +78,6 @@ export default {
     },
     mounted() {
         this.$socket.on("PEER_LIVE", (peerStatus) => {
-            console.log("peerStatus")
-            console.log(peerStatus)
-
             this.isPeerLive = peerStatus
         })
     }

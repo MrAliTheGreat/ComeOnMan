@@ -1,7 +1,7 @@
 <template>
     <div class="on-middle">
         <div class="local-container">
-            <div style="position: relative; margin: 25px;">
+            <div class="video-container">
                 <img v-if="isLocalVideoOff" 
                     :src="user.avatar"
                     class="no-video-alt"
@@ -210,18 +210,35 @@ export default {
 
 <style scoped>
 /* Mobile */
+/* Fix bug related to mobile video height!!! */
 @media (max-width:850px) {
     .on-middle {
         flex: 1;
         flex-direction: column !important;
     }
 
+    .local-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 12px;
+    }
+
+    .controls-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .video-container {
+        position: relative;
+    }    
+
     .local-start {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
         align-self: center;
@@ -229,20 +246,18 @@ export default {
 
     .local-compact {
         object-fit: cover;
-        margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
         align-self: center;
-        animation: shrink 0.6s forwards;
+        animation: shrink 0.5s forwards;
     }
 
     .local-normal {
         object-fit: cover;
-        margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
         align-self: center;
-        animation: expand 0.6s forwards;
+        animation: expand 0.5s forwards;
     }
 
     .local-start:hover, .local-compact:hover, .local-normal:hover {
@@ -251,40 +266,104 @@ export default {
 
     .remote {
         flex: 1;
-        width: 100vw;
+        width: 97vw;
         object-fit: cover;
         border-radius: 3%;
-        margin: 10px;
         border: 2px solid #84F4FF;
         box-shadow: 0px 0px 10px #84F4FF;
         align-self: center;
     }
 
+    img {
+        height: 70px;
+        width: 70px;
+        margin: 5px;
+        border-radius: 50%;
+    }
+
+    img:hover {
+        cursor: pointer;
+    }
+
+    img:active {
+        opacity: 0.5;
+    }
+
+    .img-selected {
+        height: 70px;
+        width: 70px;
+        margin: 5px;
+        padding: 6px;
+        border-radius: 50%;
+        border: 2px solid #C10C5E;
+        box-shadow: 0px 0px 10px #C10C5E;
+    }
+
+    .no-video-alt {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-54.5%, -56%);
+    }
+
+    .no-peer-video-alt{
+        position: absolute;
+        height: 150px;
+        width: 150px;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .no-audio-alt {
+        position: absolute;
+        height: 35px;
+        width: 35px;
+        border-radius: 50%;
+        background-color: black;
+        left: 50%;
+        transform: translateX(-62%);
+    }
+
+    .no-peer-audio-alt {
+        position: absolute;
+        height: 35px;
+        width: 35px;
+        border-radius: 50%;
+        background-color: black;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     @keyframes expand {
         0% {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
         }
         100% {
-            width: 100vw;
-            height: 360px;
+            width: 97vw;
+            height: 250px;
             border-radius: 3%;
         }
     }
 
     @keyframes shrink {
         0% {
-            width: 100vw;
-            height: 360px;
+            width: 97vw;
+            height: 250px;
             border-radius: 3%;
         }
         25% {
             border-radius: 3%;
         }
         100% {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -310,6 +389,11 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    .video-container {
+        position: relative;
+        margin: 25px;        
     }
 
     .local-start {

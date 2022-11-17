@@ -15,14 +15,14 @@
                 <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
             </div>
             <div class="controls-container">
-                <div style="border-bottom: 1px solid white">
+                <div class="separator">
                     <img src="/video-off.png" @click="onVidOff"/>
                     <img src="/mic-off.png" @click="onMicOff"/>
                 </div>
                 <img src="/hangup.png" @click="onEndCall"/>
             </div>
         </div>
-        <div style="flex: 1; display: flex; position: relative;">
+        <div style="flex: 1; height: 94%; width: 100%; display: flex; position: relative; margin: 10px;">
             <img v-if="isPeerVideoOff" 
                 :src="peer.avatar"
                 class="no-peer-video-alt"
@@ -226,7 +226,7 @@ export default {
 
     .controls-container{
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
     }
 
@@ -339,6 +339,10 @@ export default {
         transform: translateX(-50%);
     }
 
+    .separator {
+        margin-bottom: 5px;
+    }
+
     @keyframes expand {
         0% {
             width: 180px;
@@ -428,6 +432,7 @@ export default {
         border-radius: 3%;
         border: 2px solid #84F4FF;
         box-shadow: 0px 0px 10px #84F4FF;
+        object-fit: cover;
     }
 
     img {
@@ -493,7 +498,11 @@ export default {
         background-color: black;
         left: 50%;
         transform: translateX(-50%);
-    }    
+    }
+
+    .separator {
+        border-bottom: 1px solid white;
+    }
 
     @keyframes expand {
         0% {

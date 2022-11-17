@@ -47,5 +47,12 @@ io.on("connection", (socket) => {
     })
     socket.on("RTC_CALL_ENDED", () => {
         socket.broadcast.emit("CALL_ENDED")
+    })
+
+    socket.on("LOCAL_VIDEO_OFF", (videoDetails) => {
+        socket.broadcast.emit("PEER_VIDEO_OFF", videoDetails)
+    })
+    socket.on("LOCAL_MIC_OFF", (micStatus) => {
+        socket.broadcast.emit("PEER_MIC_OFF", micStatus)
     })    
 })

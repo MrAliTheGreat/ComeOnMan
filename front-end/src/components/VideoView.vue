@@ -1,33 +1,45 @@
 <template>
     <div class="on-middle">
         <div class="local-container">
-            <img v-if="isVideoOff" 
-                :src="user.avatar"
-                class="no-video-alt"
-                @click="onLocalClick"
-            />
-            <img v-if="isAudioOff" 
-                src="/no-mic.png"
-                class="no-audio-alt"
-                @click="onLocalClick"
-            />            
-            <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
+            <div style="position: relative; margin: 25px;">
+                <img v-if="isLocalVideoOff" 
+                    :src="user.avatar"
+                    class="no-video-alt"
+                    @click="onLocalClick"
+                />
+                <img v-if="isLocalAudioOff" 
+                    src="/no-mic.png"
+                    class="no-audio-alt"
+                    @click="onLocalClick"
+                />            
+                <video autoplay playsinline muted :srcObject.prop="localStream" class="local-start" ref="local" @click="onLocalClick"></video>
+            </div>
             <div class="controls-container">
                 <div style="border-bottom: 1px solid white">
-                    <img src="/video-off.png" @click="onVideoOff"/>
+                    <img src="/video-off.png" @click="onVidOff"/>
                     <img src="/mic-off.png" @click="onMicOff"/>
                 </div>
                 <img src="/hangup.png" @click="onEndCall"/>
             </div>
         </div>
-        <video 
-            v-for="remoteStream, index in remoteStreams"
-            :key="index"
-            autoplay
-            playsinline
-            :srcObject.prop="remoteStream"
-            class="remote"
-        ></video>
+        <div style="flex: 1; display: flex; position: relative;">
+            <img v-if="isPeerVideoOff" 
+                :src="peer.avatar"
+                class="no-peer-video-alt"
+            />
+            <img v-if="isPeerAudioOff" 
+                src="/no-mic.png"
+                class="no-peer-audio-alt"
+            />                    
+            <video 
+                v-for="remoteStream, index in remoteStreams"
+                :key="index"
+                autoplay
+                playsinline
+                :srcObject.prop="remoteStream"
+                class="remote"
+            ></video>
+        </div>
     </div>
 </template>
 
@@ -38,8 +50,11 @@ export default {
     name: "VideoView",
     data() {
         return {
-            isVideoOff: false,
-            isAudioOff: false,
+            isLocalVideoOff: false,
+            isPeerVideoOff: false,
+            isLocalAudioOff: false,
+            isPeerAudioOff: false,
+            peer: {},
 
             localStream: null,
             remoteStreams: [],
@@ -81,20 +96,25 @@ export default {
         this.$socket.on("ANSWER", (answer) => {          
             this.peerConnection ? this.peerConnection.setRemoteDescription(answer) : null
         })
-
-
-        this.peerConnection.onicecandidate = (event) => {          
-            if(event.candidate) {
-                this.$socket.emit("RTC_NEW_CANDIDATE", event.candidate)
-            }
-        }
-
         this.$socket.on("CALL_ENDED", () => {
             if(this.peerConnection){
                 this.peerConnection.close()
                 this.$emit("chat")
             }
         })
+        this.$socket.on("PEER_VIDEO_OFF", ({ peer, peerVideoStatus }) => {
+            this.isPeerVideoOff = peerVideoStatus
+            this.peer = peer
+        })
+        this.$socket.on("PEER_MIC_OFF", (peerMicStatus) => {
+            this.isPeerAudioOff = peerMicStatus
+        })        
+
+        this.peerConnection.onicecandidate = (event) => {          
+            if(event.candidate) {
+                this.$socket.emit("RTC_NEW_CANDIDATE", event.candidate)
+            }
+        }
 
         navigator.mediaDevices.getUserMedia({
             video: {
@@ -149,19 +169,21 @@ export default {
         onEndCall() {
             this.$emit("chat")
         },
-        onVideoOff(event) {
+        onVidOff(event) {
             event.target.className === "" ?  event.target.className = "img-selected" : event.target.className = ""
             this.localStream.getVideoTracks().forEach((videoTrack) => {
                 videoTrack.enabled = !videoTrack.enabled
             })
-            this.isVideoOff = !this.isVideoOff
+            this.isLocalVideoOff = !this.isLocalVideoOff
+            this.$socket.emit("LOCAL_VIDEO_OFF", {peer: this.user, peerVideoStatus: this.isLocalVideoOff})
         },
         onMicOff(event) {
             event.target.className === "" ?  event.target.className = "img-selected" : event.target.className = ""
             this.localStream.getAudioTracks().forEach((audioTrack) => {
                 audioTrack.enabled = !audioTrack.enabled
             })
-            this.isAudioOff = !this.isAudioOff
+            this.isLocalAudioOff = !this.isLocalAudioOff
+            this.$socket.emit("LOCAL_MIC_OFF", this.isLocalAudioOff)
         }
     },
     beforeDestroy() {
@@ -272,7 +294,6 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 10px;
     }
 
     .controls-container{
@@ -283,18 +304,16 @@ export default {
     }
 
     .local-start {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
     }
 
     .local-compact {
         object-fit: cover;
-        margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
         animation: shrink 0.6s forwards;
@@ -302,7 +321,6 @@ export default {
 
     .local-normal {
         object-fit: cover;
-        margin: 10px;
         border: 2px solid #7FFFCB;
         box-shadow: 0px 0px 10px #7FFFCB;
         animation: expand 0.6s forwards;
@@ -314,11 +332,9 @@ export default {
 
     .remote {
         flex: 1;
-        width: 100vw;
         border-radius: 3%;
         border: 2px solid #84F4FF;
         box-shadow: 0px 0px 10px #84F4FF;
-        margin: 10px;
     }
 
     img {
@@ -348,25 +364,48 @@ export default {
 
     .no-video-alt {
         position: absolute;
-        margin-top: 3%;
-        height: 75px;
-        width: 75px;
+        height: 100px;
+        width: 100px;
         border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-54.5%, -56%);
+    }
+
+    .no-peer-video-alt{
+        position: absolute;
+        height: 150px;
+        width: 150px;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
 
     .no-audio-alt {
         position: absolute;
-        margin-top: 0.9%;
         height: 35px;
         width: 35px;
         border-radius: 50%;
         background-color: black;
+        left: 50%;
+        transform: translateX(-60%);
     }
+
+    .no-peer-audio-alt {
+        position: absolute;
+        height: 35px;
+        width: 35px;
+        border-radius: 50%;
+        background-color: black;
+        left: 50%;
+        transform: translateX(-50%);
+    }    
 
     @keyframes expand {
         0% {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
         }
         100% {
@@ -386,8 +425,8 @@ export default {
             border-radius: 3%;
         }
         100% {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             object-fit: cover;
         }

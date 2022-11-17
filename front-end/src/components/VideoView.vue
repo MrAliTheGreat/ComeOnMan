@@ -170,6 +170,7 @@ export default {
         },
         onEndCall() {
             this.$emit("chat")
+            this.$socket.emit("LIVE", false)
         },
         onVidOff(event) {
             event.target.className === "" ?  event.target.className = "img-selected" : event.target.className = ""

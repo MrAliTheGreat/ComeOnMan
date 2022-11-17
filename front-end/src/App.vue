@@ -4,6 +4,7 @@
             :isChat="isChat"
             :isVideo="isVideo"
             :hideVideo="hideVideo"
+            :isPeerLive="isPeerLive"
             @videoCallStart="onVideoCallStart"
             @hideVideo="onHideVideo"
         />
@@ -42,6 +43,7 @@ export default {
             isChat: false,
             isVideo: false,
             hideVideo: false,
+            isPeerLive: false,
             editMessage: {},
         }
     },
@@ -73,6 +75,14 @@ export default {
             this.isChat = this.user.name
             this.hideVideo = true
         }
+    },
+    mounted() {
+        this.$socket.on("PEER_LIVE", (peerStatus) => {
+            console.log("peerStatus")
+            console.log(peerStatus)
+
+            this.isPeerLive = peerStatus
+        })
     }
 }
 </script>

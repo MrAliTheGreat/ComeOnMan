@@ -6,7 +6,7 @@
         </div>
         <Transition @before-enter="beforeEnter" @after-enter="afterEnter">
             <div v-if="isChat || isVideo" style="flex: 1; display: flex; justify-content: flex-end; height: 65px;">
-                <img v-if="isChat" src="/video-call.png" @click="onVideoCall"/>
+                <img v-if="isChat" :src="isPeerLive ? '/video-call-live.png' : '/video-call.png'" @click="onVideoCall"/>
                 <img v-if="isVideo && !hideVideo" src="/chat.png" @click="onHideVideo"/>
             </div>
         </Transition>
@@ -16,7 +16,7 @@
 <script>
 export default {
     name: "TitleView",
-    props: ["isChat", "isVideo", "hideVideo"],
+    props: ["isChat", "isVideo", "hideVideo", "isPeerLive"],
     methods: {
         beforeEnter(el) {
             el.firstChild.style = "display: none"
@@ -29,6 +29,7 @@ export default {
         },
         onVideoCall() {
             this.$emit("videoCallStart")
+            this.$socket.emit("LIVE", true)
         },
         onHideVideo() {
             this.$emit("hideVideo")

@@ -54,5 +54,8 @@ io.on("connection", (socket) => {
     })
     socket.on("LOCAL_MIC_OFF", (micStatus) => {
         socket.broadcast.emit("PEER_MIC_OFF", micStatus)
+    })
+    socket.on("LIVE", (status) => {
+        io.emit("PEER_LIVE", status)
     })    
 })

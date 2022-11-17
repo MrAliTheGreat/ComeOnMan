@@ -74,8 +74,10 @@ export default {
             ),
         }
     },
-    props: [ "user" ],
+    props: [ "user", "peerMediaDetails" ],
     mounted() {
+        this.setPeerMediaStatus(this.peerMediaDetails)
+
         this.$socket.on("ICE_CANDIDATE", (candidate) => {
             this.peerConnection && this.peerConnection.connectionState !== "closed" ? this.peerConnection.addIceCandidate(candidate) : null
         })
@@ -184,7 +186,12 @@ export default {
             })
             this.isLocalAudioOff = !this.isLocalAudioOff
             this.$socket.emit("LOCAL_MIC_OFF", this.isLocalAudioOff)
-        }
+        },
+        setPeerMediaStatus({ starter, vidStatus, micStatus }) {
+            this.peer = starter
+            this.isPeerVideoOff = vidStatus
+            this.isPeerAudioOff = micStatus
+        },
     },
     beforeDestroy() {
         this.stopLocalMedia("video")
@@ -195,6 +202,7 @@ export default {
         this.peerConnection.close()
         this.peerConnection = null
         this.$socket.emit("RTC_CALL_ENDED")
+        this.$emit("resetVideoViewPeer")
     }
 }
 </script>
@@ -389,7 +397,7 @@ export default {
         border-radius: 50%;
         background-color: black;
         left: 50%;
-        transform: translateX(-60%);
+        transform: translateX(-62%);
     }
 
     .no-peer-audio-alt {

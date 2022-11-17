@@ -4,6 +4,8 @@
             @chat="onChat"
             :style="hideVideo ? 'display: none;' : ''"
             :user="user"
+            :peerMediaDetails="{starter: videoViewPeer, vidStatus: isVideoViewPeerVideoOff, micStatus: isVideoViewPeerAudioOff}"
+            @resetVideoViewPeer="onResetVideoViewPeer"
         />
         <div v-if="isChat" class="on-middle">   
             <div v-if="!chat.length" class="greeting">
@@ -57,6 +59,10 @@ export default {
         return {
             chat: [],
             typing_peers: [],
+
+            videoViewPeer: {},
+            isVideoViewPeerVideoOff: false,
+            isVideoViewPeerAudioOff: false,
         }
     },
     components: {
@@ -88,7 +94,12 @@ export default {
         },
         onChat() {
             this.$emit("chat", true)
-        }
+        },
+        onResetVideoViewPeer() {
+            this.videoViewPeer = {}
+            this.isVideoViewPeerVideoOff = false
+            this.isVideoViewPeerAudioOff = false
+        },
     },
     computed: {
         typingMessage() {
@@ -136,6 +147,14 @@ export default {
                     msg.user.socketID === data.user.socketID
                 )
             })
+        })
+
+        this.$socket.on("PEER_VIDEO_OFF", ({ peer, peerVideoStatus }) => {
+            this.isVideoViewPeerVideoOff = peerVideoStatus
+            this.videoViewPeer = peer
+        })
+        this.$socket.on("PEER_MIC_OFF", (peerMicStatus) => {
+            this.isVideoViewPeerAudioOff = peerMicStatus
         })
     }
 }

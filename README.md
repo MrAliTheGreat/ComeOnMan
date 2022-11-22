@@ -5,11 +5,11 @@ ComeOnMan is a chat app which helps people to stay connected even when the Inter
 </div>
 
 <br />
-<br />
 
+---
 
 ## Initial Setup
----
+
 <div align="justify">
 ComeOnMan uses Tailscale or WireGuard for making a virtual network. Devices will connect to the server via Tailscale or WireGurad and then the communication begins.
 
@@ -19,7 +19,7 @@ One important note here is that WireGuard can be blocked easily. WireGuard has n
 <br />
 
 ### Tailscale Setup
----
+
 <div align="justify">
 First, you have to create a free account. Tailscale does not have its own account system. However, it supports services like Google, Microsoft, GitHub and others. So, by just having a gmail you can start using Tailscale. After that, you have to install Tailscale app on your device and login to your account. That's it! By now, you will have a private network and a unique IP will be assigned to your device. This IP can only be accessed from inside your private network. For adding other devices you can do the same procedure on each device. You can also share your devices on your private network with others. This way other people from other private networks will just have access to the device you shared with them and no other device. This way anyone with a Tailscale account can access your shared device from their own device which has Tailscale app.
 
@@ -29,7 +29,7 @@ For disconnecting Tailscale on Windows, you have to exit the app and turn off Ta
 <br />
 
 ### WireGurad Setup
----
+
 <div align="justify">
 After installing WireGuard, We have to make a new tunnel. Inside the config file, under interface, we have to specify the new virtual address and listen port of the current device. Under peer, we have to place all the devices which want to connect. We must specify each of their public keys, new virtual addresses and endpoints. For endpoint, we have to get each of the peers' public IP address which can be found with a simple search online. After this setup on all the devices in the virtual network, we can ping any device from any other device. We can then move on to the next section for setting up the server.
 
@@ -39,7 +39,7 @@ As mentioned above WireGuard on its own can get blocked so if WireGuard does not
 <br />
 
 ### Back-end
----
+
 <div align="justify">
 After setting up WireGuard, we have to start the backend server. The backend server uses socket.io to make real-time communication possible. To start the server, first, all the dependencies must be installed using npm, so by running the command `npm install` in /back-end directory this part can be covered. Then, the IP address of the host must be set up in the backend. The IP address used here is the same as host virtual address placed in WireGuard. After setting IP address and a desirable port number in a file named ConnectionConfig.js at the root project directory, we can finally start the back-end server by running the command `npm run dev` in /back-end directory. If everything is gone right you can see a message saying "Express: Listening on port ---!"
 </div>
@@ -47,7 +47,7 @@ After setting up WireGuard, we have to start the backend server. The backend ser
 <br />
 
 ### Front-end
----
+
 <div align="justify">
 After running the backend server, we have to run the frontend code. Again, just like back-end, dependencies must be installed. Also, the frontend uses Vue framework so vue-cli needs to be installed. After all the installations, the IP address needs to be set up, just like backend. However, for frontend, the IP address must be placed at the end of serve script in front-end's package.json file. By adding "--host IP_ADDRESS" to the end of serve script everything will be set up for running the frontend code. So, finally, by running the command `npm run serve` in the /front-end directory, the app can be access at "http://IP_ADDRESS:8080/". Again, IP_ADDRESS is the same as the one in WireGuard!
 </div>
@@ -56,7 +56,7 @@ After running the backend server, we have to run the frontend code. Again, just 
 <br />
 
 ## Upcoming Features
----
+
 - [x] **Real Time Chat**
 - [x] **One-on-one Voice Call**
 - [x] **One-on-one Video Call**

@@ -87,6 +87,7 @@ export default {
 <style scoped>
 .root-div {
     background-color: #101010;
+    background-image: url('../public/background.png');
     display: flex;
     flex-direction: column;
     justify-content: center;

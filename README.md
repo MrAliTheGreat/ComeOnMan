@@ -60,7 +60,7 @@ After running the backend server, we have to run the frontend code. Again, just 
 - [x] **Real Time Chat**
 - [x] **One-on-one Voice Call**
 - [x] **One-on-one Video Call**
-- [] **Screen Share**
-- [] **File Transfer**
-- [] **Group Voice Call**
-- [] **Group Video Call**
+- [ ] **Screen Share**
+- [ ] **File Transfer**
+- [ ] **Group Voice Call**
+- [ ] **Group Video Call**

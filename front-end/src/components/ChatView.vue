@@ -10,6 +10,7 @@
         <div v-if="isChat" class="on-middle">   
             <div v-if="!chat.length" class="greeting">
                 Start Chatting Now...
+                <input type="file" @change="onUpload"/>
             </div>
             <transition-group v-else name="slide" class="chat-wrapper" @before-leave="onBeforeLeave">
                 <div 
@@ -100,6 +101,9 @@ export default {
             this.isVideoViewPeerVideoOff = false
             this.isVideoViewPeerAudioOff = false
         },
+        onUpload(event) {
+            this.$socket.emit("UPLOAD", { file: event.target.files[0], fileName: event.target.files[0].name } )
+        },
     },
     computed: {
         typingMessage() {
@@ -155,6 +159,15 @@ export default {
         })
         this.$socket.on("PEER_MIC_OFF", (peerMicStatus) => {
             this.isVideoViewPeerAudioOff = peerMicStatus
+        })
+
+        this.$socket.on("PEER_UPLOAD", ({ file, fileName }) => {
+            const blob = new Blob([ file ])
+            const link = document.createElement("a")
+            link.href = URL.createObjectURL(blob)
+            link.download = fileName
+            link.click()
+            URL.revokeObjectURL(link.href)
         })
     }
 }

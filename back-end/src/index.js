@@ -57,5 +57,9 @@ io.on("connection", (socket) => {
     })
     socket.on("LIVE", (status) => {
         io.emit("PEER_LIVE", status)
+    })
+
+    socket.on("UPLOAD", (fileObj) => {
+        socket.broadcast.emit("PEER_UPLOAD", fileObj)
     })    
 })

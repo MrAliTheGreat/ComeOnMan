@@ -10,7 +10,6 @@
         <div v-if="isChat" class="on-middle">   
             <div v-if="!chat.length" class="greeting">
                 Start Chatting Now...
-                <input type="file" @change="onUpload"/>
             </div>
             <transition-group v-else name="slide" class="chat-wrapper" @before-leave="onBeforeLeave">
                 <div 
@@ -100,9 +99,6 @@ export default {
             this.videoViewPeer = {}
             this.isVideoViewPeerVideoOff = false
             this.isVideoViewPeerAudioOff = false
-        },
-        onUpload(event) {
-            this.$socket.emit("UPLOAD", { file: event.target.files[0], fileName: event.target.files[0].name } )
         },
     },
     computed: {

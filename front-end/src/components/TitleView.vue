@@ -5,9 +5,26 @@
                 <img src="/upload.png" @click="showUploadArea = !showUploadArea"/>
                 <Transition name="slide">
                     <label v-if="showUploadArea" class="upload-area">
-                        <span class="upload-area-text">
+                        <span v-if="!uploadStatus" class="upload-area-text">
                             Click to select file or Drop your file here!
                         </span>
+                        <div v-if="uploadStatus === 'Uploading'" class="upload-area-text uploading">
+                            <span> U </span>
+                            <span> p </span>
+                            <span> l </span>
+                            <span> o </span>
+                            <span> a </span>
+                            <span> d </span>
+                            <span> i </span>
+                            <span> n </span>
+                            <span> g </span>
+                            <span> . </span>
+                            <span> . </span>
+                            <span> . </span>
+                        </div>
+                        <div v-if="uploadStatus === 'Uploaded'" class="upload-area-text uploaded">
+                            Upload Complete!
+                        </div>
                         <input
                             type="file"
                             @change="onUpload"
@@ -38,6 +55,7 @@ export default {
     data() {
         return {
             showUploadArea: false,
+            uploadStatus: "",
         }
     },
     props: ["isChat", "isVideo", "hideVideo", "isPeerLive"],
@@ -49,7 +67,7 @@ export default {
             setTimeout(() => {
                 el.firstChild.style = ""
                 el.firstChild.className = "video-icon"
-            }, 5000)
+            }, 2000)
         },
         onVideoCall() {
             this.$emit("videoCallStart")
@@ -60,8 +78,12 @@ export default {
             this.$emit("hideVideo")
         },
         onUpload(event) {
-            event.target.parentNode.className = "upload-area"
-            this.$socket.emit("UPLOAD", { file: event.target.files[0], fileName: event.target.files[0].name } )
+            if(event.target.files[0]){
+                this.uploadStatus = "Uploading"
+                event.target.parentNode.className = "upload-area"
+                this.$socket.emit("UPLOAD", { file: event.target.files[0], fileName: event.target.files[0].name, uploader: this.$socket.id } )
+                event.target.value = ""
+            }
         },
         onDragEnter(event) {
             event.target.parentNode.className = "upload-area dragging"
@@ -69,7 +91,15 @@ export default {
         onDragLeave(event) {
             event.target.parentNode.className = "upload-area"
         }
-    }
+    },
+    mounted() {
+        this.$socket.on("UPLOADED_FILE_RECEIVED", () => {
+            this.uploadStatus = "Uploaded"
+            setTimeout(() => {
+                this.uploadStatus = ""
+            }, 5000)
+        })
+    },
 }
 </script>
 
@@ -159,6 +189,76 @@ export default {
 
 .slide-enter-active, .slide-leave-active{
     transition: all 1s ease;
+}
+
+.uploaded {
+    animation: completed 2s forwards;
+}
+
+@keyframes completed{
+    0% {
+        transform: scale(0.40);
+    }
+    60% {
+        color: #7FFFCB;
+        transform: scale(1.15);
+    }
+    100% {
+        color: #7FFFCB;
+    }
+}
+
+.uploading span {
+    display: inline-block;
+    font-size: 20px;
+    animation: waveText 1.5s ease-in-out infinite;
+}
+
+@keyframes waveText {
+    0% {
+        color: #7FFFCB;
+    }
+    50% {
+        transform: translateY(-12px);
+        color: #84F4FF;
+    }
+}
+
+.uploading span:nth-of-type(1){
+    animation-delay: 0.0s;
+}
+.uploading span:nth-of-type(2){
+    animation-delay: 0.1s;
+}
+.uploading span:nth-of-type(3){
+    animation-delay: 0.2s;
+}
+.uploading span:nth-of-type(4){
+    animation-delay: 0.3s;
+}
+.uploading span:nth-of-type(5){
+    animation-delay: 0.4s;
+}
+.uploading span:nth-of-type(6){
+    animation-delay: 0.5s;
+}
+.uploading span:nth-of-type(7){
+    animation-delay: 0.6s;
+}
+.uploading span:nth-of-type(8){
+    animation-delay: 0.7s;
+}
+.uploading span:nth-of-type(9){
+    animation-delay: 0.8s;
+}
+.uploading span:nth-of-type(10){
+    animation-delay: 0.9s;
+}
+.uploading span:nth-of-type(11){
+    animation-delay: 1.0s;
+}
+.uploading span:nth-of-type(12){
+    animation-delay: 1.1s;
 }
 
 @keyframes flicker {

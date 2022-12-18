@@ -157,13 +157,15 @@ export default {
             this.isVideoViewPeerAudioOff = peerMicStatus
         })
 
-        this.$socket.on("PEER_UPLOAD", ({ file, fileName }) => {
+        this.$socket.on("PEER_UPLOAD", ({ file, fileName, uploader }) => {
             const blob = new Blob([ file ])
             const link = document.createElement("a")
             link.href = URL.createObjectURL(blob)
             link.download = fileName
             link.click()
             URL.revokeObjectURL(link.href)
+            
+            this.$socket.emit("FILE_RECEIVED", uploader)
         })
     }
 }

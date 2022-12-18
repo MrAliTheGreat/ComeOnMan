@@ -20,7 +20,9 @@ server.listen(ConnectionConfig.expressPort, ConnectionConfig.serverVirtualIP, ()
 
 const io = require("socket.io")(server, {
     origins: [`//${ConnectionConfig.serverVirtualIP}:${ConnectionConfig.expressPort}/`],
-    cors: true
+    cors: true,
+    maxHttpBufferSize: 1e10,
+    pingTimeout: 100000
 })
 
 io.on("connection", (socket) => {
@@ -61,5 +63,8 @@ io.on("connection", (socket) => {
 
     socket.on("UPLOAD", (fileObj) => {
         socket.broadcast.emit("PEER_UPLOAD", fileObj)
+    })
+    socket.on("FILE_RECEIVED", (uploader) => {
+        io.to(uploader).emit("UPLOADED_FILE_RECEIVED")
     })    
 })

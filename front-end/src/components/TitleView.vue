@@ -2,7 +2,7 @@
     <div class="main-div">
         <Transition @before-enter="beforeEnter" @after-enter="afterEnter">
             <div v-if="isChat || isVideo" style="flex: 1; display: flex; justify-content: flex-start; height: 65px;">
-                <img src="/upload.png" @click="showUploadArea = !showUploadArea"/>
+                <img src="/upload.png" @click="onUploadAreaOpened"/>
                 <Transition name="slide">
                     <label v-if="showUploadArea" class="upload-area">
                         <span v-if="!uploadStatus" class="upload-area-text">
@@ -56,6 +56,7 @@ export default {
         return {
             showUploadArea: false,
             uploadStatus: "",
+            uploadedAudio: null,
         }
     },
     props: ["isChat", "isVideo", "hideVideo", "isPeerLive"],
@@ -77,6 +78,13 @@ export default {
         onHideVideo() {
             this.$emit("hideVideo")
         },
+        onUploadAreaOpened() {
+            this.showUploadArea = !this.showUploadArea
+
+            this.uploadedAudio = new Audio("/uploaded.mp3")
+            this.uploadedAudio.play()
+            this.uploadedAudio.pause()
+        },
         onUpload(event) {
             if(event.target.files[0]){
                 this.uploadStatus = "Uploading"
@@ -95,6 +103,8 @@ export default {
     mounted() {
         this.$socket.on("UPLOADED_FILE_RECEIVED", () => {
             this.uploadStatus = "Uploaded"
+            this.uploadedAudio.currentTime = 0
+            this.uploadedAudio.play()
             setTimeout(() => {
                 this.uploadStatus = ""
             }, 5000)

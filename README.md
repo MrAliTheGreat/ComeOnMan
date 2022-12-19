@@ -49,7 +49,15 @@ After setting up WireGuard, we have to start the backend server. The backend ser
 ### Front-end
 
 <div align="justify">
-After running the backend server, we have to run the frontend code. Again, just like back-end, dependencies must be installed. Also, the frontend uses Vue framework so vue-cli needs to be installed. After all the installations, the IP address needs to be set up, just like backend. However, for frontend, the IP address must be placed at the end of serve script in front-end's package.json file. By adding "--host IP_ADDRESS" to the end of serve script everything will be set up for running the frontend code. So, finally, by running the command `npm run serve` in the /front-end directory, the app can be access at "http://IP_ADDRESS:8080/". Again, IP_ADDRESS is the same as the one in WireGuard!
+After running the backend server, we have to run the frontend code. Again, just like back-end, dependencies must be installed. Also, the frontend uses Vue framework so vue-cli needs to be installed. After all the installations, the IP address needs to be set up, just like backend. However, for frontend, the IP address must be placed at the end of serve script in front-end's package.json file. By adding "--host IP_ADDRESS" to the end of serve script everything will be set up for running the frontend code. So, finally, by running the command `npm run serve` in the /front-end directory, the app can be accessed.
+</div>
+
+<br />
+
+## Usage
+
+<div align="justify">
+Now that the backend and frontend are running, to start using ComeOnMan! first you have to go to https://IP_ADDRESS:3000/. After loading up this page on your browser you have to accept the certificate before continuing. Just go to advanced and proceed ahead. The page will show a message saying "Welcome to ComeOnMan Backend Server!". After seeing this message on the page, you can access ComeOnMan! on https://IP_ADDRESS:8080/. Again the certificate will show up and you have do the exact same action from before. After this ComeOnMan! will be ready for you to use.
 </div>
 
 <br />
@@ -61,6 +69,6 @@ After running the backend server, we have to run the frontend code. Again, just 
 - [x] **One-on-one Voice Call**
 - [x] **One-on-one Video Call**
 - [ ] **Screen Share**
-- [ ] **File Transfer**
+- [x] **File Transfer**
 - [ ] **Group Voice Call**
 - [ ] **Group Video Call**

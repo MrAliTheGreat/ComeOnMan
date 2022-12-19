@@ -44,8 +44,8 @@
                 </div>
             </transition-group>
         </div>
-        <span v-if="typing_peers.length && isChat" class="typing-msg">
-            {{ typingMessage }}
+        <span v-if="(uploading_peers.length || typing_peers.length) && isChat" class="typing-msg">
+            {{ peerStatusMessage }}
         </span>
     </div>
 </template>
@@ -59,6 +59,7 @@ export default {
         return {
             chat: [],
             typing_peers: [],
+            uploading_peers: [],
 
             videoViewPeer: {},
             isVideoViewPeerVideoOff: false,
@@ -102,14 +103,21 @@ export default {
         },
     },
     computed: {
-        typingMessage() {
-            if(!this.typing_peers.length) {
-                return ""
+        peerStatusMessage() {
+            let message = ""
+            if(this.uploading_peers.length === 1) {
+                message += this.uploading_peers[0].name + " is uploading... "
+            }
+            if(this.uploading_peers.length > 1) {
+                message += this.uploading_peers.map(peer => peer.name).join(", ") + " are uploading... "
             }
             if(this.typing_peers.length === 1) {
-                return this.typing_peers[0].name + " is typing..."
+                message += this.typing_peers[0].name + " is typing..."
             }
-            return this.typing_peers.map(peer => peer.name).join(", ") + " are typing..."
+            if(this.typing_peers.length > 1) {
+                message += this.typing_peers.map(peer => peer.name).join(", ") + " are typing..."
+            }
+            return message
         }
     },
     mounted(){ 
@@ -165,8 +173,12 @@ export default {
             link.click()
             URL.revokeObjectURL(link.href)
             
-            this.$socket.emit("FILE_RECEIVED", uploader)
+            this.$socket.emit("FILE_RECEIVED", uploader.socketID)
+            this.uploading_peers = this.uploading_peers.filter(loopPeer => loopPeer.socketID !== uploader.socketID)
         })
+        this.$socket.on("PEER_UPLOADING", (uploader) => {
+            this.uploading_peers = [...this.uploading_peers, uploader]
+        })        
     }
 }
 </script>

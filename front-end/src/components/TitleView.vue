@@ -59,7 +59,7 @@ export default {
             uploadedAudio: null,
         }
     },
-    props: ["isChat", "isVideo", "hideVideo", "isPeerLive"],
+    props: ["isChat", "isVideo", "hideVideo", "isPeerLive", "user"],
     methods: {
         beforeEnter(el) {
             el.firstChild.style = "display: none"
@@ -87,9 +87,10 @@ export default {
         },
         onUpload(event) {
             if(event.target.files[0]){
+                this.$socket.emit("UPLOADING", this.user)
                 this.uploadStatus = "Uploading"
                 event.target.parentNode.className = "upload-area"
-                this.$socket.emit("UPLOAD", { file: event.target.files[0], fileName: event.target.files[0].name, uploader: this.$socket.id } )
+                this.$socket.emit("UPLOAD", { file: event.target.files[0], fileName: event.target.files[0].name, uploader: this.user } )
                 event.target.value = ""
             }
         },

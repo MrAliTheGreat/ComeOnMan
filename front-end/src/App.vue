@@ -5,6 +5,7 @@
             :isVideo="isVideo"
             :hideVideo="hideVideo"
             :isPeerLive="isPeerLive"
+            :user="user"
             @videoCallStart="onVideoCallStart"
             @hideVideo="onHideVideo"
         />

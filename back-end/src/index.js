@@ -66,5 +66,8 @@ io.on("connection", (socket) => {
     })
     socket.on("FILE_RECEIVED", (uploader) => {
         io.to(uploader).emit("UPLOADED_FILE_RECEIVED")
+    })
+    socket.on("UPLOADING", (uploader) => {
+        socket.broadcast.emit("PEER_UPLOADING", uploader)
     })    
 })
